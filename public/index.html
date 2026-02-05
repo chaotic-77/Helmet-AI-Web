@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helmet AI – Seguridad Inteligente</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <h1 class="logo">Helmet AI</h1>
+    <ul class="nav-links">
+      <li><a href="#about">Sobre el proyecto</a></li>
+      <li><a href="#demo">Demo</a></li>
+      <li><a href="#team">Equipo</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h2>Sistema de Detección Inteligente de Cascos</h2>
+    <p>Basado en IA para aumentar la seguridad en entornos laborales.</p>
+    <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
+      Ver Demo
+    </button>
+  </header>
+
+  <!-- SOBRE EL PROYECTO -->
+  <section id="about" class="section">
+    <h3>Sobre el proyecto</h3>
+    <p>
+      Helmet AI utiliza visión por computadora y modelos YOLO para detectar
+      el uso adecuado de cascos de seguridad en tiempo real.
+    </p>
+  </section>
+
+  <!-- DEMO -->
+  <section id="demo" class="section">
+    <h3>Prueba el modelo</h3>
+    <p>Sube una imagen y la IA detectará si se está usando casco.</p>
+
+    <input type="file" id="imageUpload" accept="image/*" />
+    <button id="sendBtn" class="btn-primary">Analizar Imagen</button>
+
+    <div id="result"></div>
+    <img id="preview" />
+  </section>
+
+  <!-- EQUIPO -->
+  <section id="team" class="section">
+    <h3>Equipo</h3>
+    <p>Integración de múltiples IAs, desarrollo robusto y eficiente.</p>
+  </section>
+
+  <!-- Config del backend (local vs producción) -->
+  <script>
+    // LOCAL:
+    window.API_BASE = "http://127.0.0.1:5000";
+
+    // PRODUCCIÓN (cuando publiques en Render):
+    // window.API_BASE = "https://TU-BACKEND.onrender.com";
+  </script>
+
+  <!-- JS al final para que el DOM ya exista -->
+  <script src="./main.js"></script>
+</body>
+</html>

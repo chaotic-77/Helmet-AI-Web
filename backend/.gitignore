@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.env
+
+# Virtualenv
+backend/venv/
+venv/
+
+# Uploads (no subir imágenes)
+backend/uploads/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Node / misc
+node_modules/
