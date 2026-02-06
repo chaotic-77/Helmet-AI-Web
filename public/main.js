@@ -4,8 +4,7 @@
   const sendBtn = document.getElementById("sendBtn");
   const result = document.getElementById("result");
 
-  // URL del backend en Render (PRODUCCIÓN)
-  const API_BASE = "https://helmet-ai-backend.onrender.com";
+  const API_BASE = "https://helmet-ai-web-backend.onrender.com";
 
   input.addEventListener("change", () => {
     const file = input.files?.[0];
