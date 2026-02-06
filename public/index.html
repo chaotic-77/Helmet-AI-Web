@@ -1,71 +1,79 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Helmet AI – Seguridad Inteligente</title>
-
-  <link rel="stylesheet" href="./styles.css" />
-</head>
 <body>
+  <div class="page-bg">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="container">
+        <a class="brand" href="#">
+          <img src="./assets/ulacit-logo.png" alt="ULACIT" />
+          <span class="title">Helmet AI</span>
+        </a>
 
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <h1 class="logo">Helmet AI</h1>
-    <ul class="nav-links">
-      <li><a href="#about">Sobre el proyecto</a></li>
-      <li><a href="#demo">Demo</a></li>
-      <li><a href="#team">Equipo</a></li>
-    </ul>
-  </nav>
+        <ul class="nav-links">
+          <li><a href="#about">Sobre el proyecto</a></li>
+          <li><a href="#demo">Demo</a></li>
+          <li><a href="#team">Equipo</a></li>
+        </ul>
+      </div>
+    </nav>
 
-  <!-- HERO -->
-  <header class="hero">
-    <h2>Sistema de Detección Inteligente de Cascos</h2>
-    <p>Basado en IA para aumentar la seguridad en entornos laborales.</p>
-    <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
-      Ver Demo
-    </button>
-  </header>
+    <!-- HERO -->
+    <header class="hero">
+      <div class="container">
+        <div>
+          <h2>Sistema de Detección Inteligente de Cascos</h2>
+          <p>Basado en visión por computadora (YOLO). Arquitectura web lista para producción académica.</p>
+          <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
+            Ver Demo
+          </button>
+          <div class="meta" style="margin-top:12px;">
+            Proyecto académico • ULACIT • Frontend (Vercel) + Backend (Render)
+          </div>
+        </div>
 
-  <!-- SOBRE EL PROYECTO -->
-  <section id="about" class="section">
-    <h3>Sobre el proyecto</h3>
-    <p>
-      Helmet AI utiliza visión por computadora y modelos YOLO para detectar
-      el uso adecuado de cascos de seguridad en tiempo real.
-    </p>
-  </section>
+        <div class="hero-card">
+          <span class="badge">Estado</span>
+          <h4 style="margin-top:10px;">Backend conectado ✅</h4>
+          <p style="opacity:0.9;">
+            Cuando el modelo <b>best.pt</b> esté disponible, el sistema pasa automáticamente a detección real.
+          </p>
+        </div>
+      </div>
+    </header>
 
-  <!-- DEMO -->
-  <section id="demo" class="section">
-    <h3>Prueba el modelo</h3>
-    <p>Sube una imagen y la IA detectará si se está usando casco.</p>
+    <div class="container">
+      <!-- SOBRE EL PROYECTO -->
+      <section id="about" class="section">
+        <h3>Sobre el proyecto</h3>
+        <p>
+          Helmet AI utiliza visión por computadora y modelos YOLO para detectar el uso adecuado de cascos de seguridad.
+        </p>
+      </section>
 
-    <input type="file" id="imageUpload" accept="image/*" />
-    <button id="sendBtn" class="btn-primary">Analizar Imagen</button>
+      <!-- DEMO -->
+      <section id="demo" class="section">
+        <h3>Prueba el modelo</h3>
+        <div class="card">
+          <p>Sube una imagen y el backend responderá si detecta casco.</p>
 
-    <div id="result"></div>
-    <img id="preview" />
-  </section>
+          <div class="demo-row" style="margin-top:12px;">
+            <input type="file" id="imageUpload" accept="image/*" />
+            <button id="sendBtn" class="btn-primary">Analizar Imagen</button>
+          </div>
 
-  <!-- EQUIPO -->
-  <section id="team" class="section">
-    <h3>Equipo</h3>
-    <p>Integración de múltiples IAs, desarrollo robusto y eficiente.</p>
-  </section>
+          <div id="result"></div>
+          <img id="preview" />
+        </div>
+      </section>
 
-  <!-- Config del backend (local vs producción) -->
-  <script>
-    // LOCAL:
-    window.API_BASE = "https://helmet-ai-backend.onrender.com";
+      <!-- EQUIPO -->
+      <section id="team" class="section">
+        <h3>Equipo</h3>
+        <p>Integración de múltiples IAs, dataset en Roboflow y despliegue web para múltiples usuarios.</p>
+      </section>
 
+      <div class="spacer"></div>
+    </div>
 
-    // PRODUCCIÓN (cuando publiques en Render):
-    // window.API_BASE = "https://TU-BACKEND.onrender.com";
-  </script>
-
-  <!-- JS al final para que el DOM ya exista -->
-  <script src="./main.js"></script>
+    <script src="./main.js"></script>
+  </div>
 </body>
-</html>
