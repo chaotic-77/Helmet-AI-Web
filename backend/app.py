@@ -8,10 +8,13 @@ CORS(app)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Helmet AI backend running", "health": "/health", "predict": "/predict"})
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
-
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -24,14 +27,14 @@ def predict():
     image.save(filepath)
 
     # Simulación IA (luego aquí va YOLO real)
-    import random
-    detected = random.choice([True, False])
+    import secrets
+    detected = bool(secrets.randbelow(2))
+    print("DEBUG detected =", detected)
 
     return jsonify({
         "detected": detected,
         "message": "Backend funcionando"
     })
-
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
