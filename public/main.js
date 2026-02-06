@@ -6,10 +6,17 @@
 
   const API_BASE = "https://helmet-ai-web-backend.onrender.com";
 
+  const setStatus = (html) => {
+    result.innerHTML = html;
+  };
+
   input.addEventListener("change", () => {
     const file = input.files?.[0];
     if (!file) return;
+
+    // Preview local
     preview.src = URL.createObjectURL(file);
+    preview.alt = "Imagen seleccionada";
   });
 
   sendBtn.addEventListener("click", async () => {
@@ -19,7 +26,11 @@
       return;
     }
 
-    result.innerHTML = "Analizando imagen con IA...";
+    // UI: bloquea botón mientras procesa
+    sendBtn.disabled = true;
+    sendBtn.textContent = "Analizando...";
+
+    setStatus("Analizando imagen con IA...");
 
     const formData = new FormData();
     formData.append("image", file);
@@ -30,20 +41,40 @@
         body: formData
       });
 
-      const data = await resp.json();
+      // Intentar leer JSON; si falla, mostrar texto crudo
+      let data = null;
+      const contentType = resp.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        data = await resp.json();
+      } else {
+        const text = await resp.text();
+        throw new Error(`Respuesta no-JSON del backend: ${text.slice(0, 300)}`);
+      }
 
       if (!resp.ok) {
-        result.innerHTML = `🔴 Error: ${data.error || "falló el análisis"}`;
+        setStatus(`🔴 Error: ${data?.error || "falló el análisis"}`);
         return;
       }
 
-      result.innerHTML = data.detected
-        ? "🟢 Backend: Casco detectado."
-        : "🔴 Backend: No se detectó casco.";
+      const mode = data.mode ? String(data.mode).toUpperCase() : "BACKEND";
+
+      setStatus(
+        data.detected
+          ? `🟢 ${mode}: Casco detectado.`
+          : `🔴 ${mode}: No se detectó casco.`
+      );
+
+      if (data.message) {
+        result.innerHTML += `<br><small>${data.message}</small>`;
+      }
 
     } catch (e) {
-      result.innerHTML = "🔴 No se pudo conectar con el backend (¿está corriendo?).";
       console.error(e);
+      setStatus("🔴 No se pudo conectar con el backend o hubo un error de respuesta.");
+    } finally {
+      // UI: reactivar botón
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Analizar Imagen";
     }
   });
 })();
