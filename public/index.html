@@ -9,45 +9,67 @@
 
 <body>
   <div class="page-bg">
-    <!-- NAVBAR -->
-    <nav class="navbar">
+
+    <!-- NAVBAR (grande arriba -> pequeña con scroll + logos a esquinas) -->
+    <nav class="navbar" id="topbar">
       <div class="container nav-inner">
-        <a class="brand" href="#">
-          <img class="brand-logo" src="./assets/ulacit-logo.png" alt="ULACIT" />
-          <span class="title">Helmet AI</span>
+
+        <!-- Logo izquierdo (aparece en scroll) -->
+        <a class="corner-logo corner-logo--left" href="#top" aria-label="Inicio">
+          <img src="./assets/ulacit-logo.png" alt="ULACIT" />
         </a>
 
-        <ul class="nav-links">
-          <li><a href="#about">Sobre el proyecto</a></li>
-          <li><a href="#demo">Demo</a></li>
-          <li><a href="#team">Equipo</a></li>
-        </ul>
+        <!-- Centro: marca + links -->
+        <div class="nav-center">
+          <a class="brand" href="#top" aria-label="Helmet AI inicio">
+            <img class="brand-logo" src="./assets/ulacit-logo.png" alt="ULACIT" />
+            <span class="title">Helmet AI</span>
+          </a>
+
+          <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+            ☰
+          </button>
+
+          <ul class="nav-links" id="navLinks">
+            <li><a href="#about">Proyecto</a></li>
+            <li><a href="#try">Probar</a></li>
+            <li><a href="#team">Equipo</a></li>
+          </ul>
+        </div>
+
+        <!-- Logo derecho (aparece en scroll) -->
+        <a class="corner-logo corner-logo--right" href="#top" aria-label="Inicio">
+          <img src="./assets/ulacit-logo.png" alt="ULACIT" />
+        </a>
+
       </div>
     </nav>
 
     <!-- HERO -->
-    <header class="hero">
+    <header class="hero" id="top">
       <div class="container hero-grid">
         <div class="hero-left">
-          <h2>Sistema de Detección Inteligente de Cascos</h2>
-          <p>Basado en visión por computadora (YOLO). Arquitectura web lista para producción académica.</p>
-
-          <button class="btn-primary"
-            onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
-            Ver Demo
-          </button>
+          <div class="pill">Preview académico • Visión por computadora</div>
+          <h2>DETECCIÓN DE CASCOS CON IA</h2>
+          <p>
+            Sistema web para identificar cascos de seguridad en imágenes usando un modelo tipo YOLO.
+          </p>
 
           <div class="meta">
-            Proyecto académico • ULACIT • Frontend (Vercel) + Backend (Render)
+            ULACIT • Frontend (Vercel) + Backend (Render) • Dataset (Roboflow)
           </div>
         </div>
 
-        <div class="hero-card">
-          <span class="badge">Estado</span>
-          <h4>Backend conectado ✅</h4>
-          <p>
-            Cuando el modelo <b>best.pt</b> esté disponible, el sistema pasa automáticamente a detección real.
-          </p>
+        <!-- Hero right vacío/estético (si querés luego metemos arquitectura en tarjetas) -->
+        <div class="hero-right">
+          <div class="hero-mini">
+            <div class="hero-mini__title">Flujo</div>
+            <div class="steps">
+              <span class="step">1) Subir</span>
+              <span class="step">2) Analizar</span>
+              <span class="step">3) Resultados</span>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -57,44 +79,60 @@
       <section id="about" class="section">
         <h3>Sobre el proyecto</h3>
         <p>
-          Helmet AI utiliza visión por computadora y modelos YOLO para detectar el uso adecuado de cascos de seguridad.
+          Helmet AI utiliza visión por computadora y modelos tipo YOLO para detectar el uso adecuado de cascos de seguridad.
         </p>
+
+        <div class="arch">
+          <div class="arch-card">
+            <div class="arch-k">Frontend</div>
+            <div class="arch-v">Vercel</div>
+          </div>
+          <div class="arch-card">
+            <div class="arch-k">Backend</div>
+            <div class="arch-v">Render</div>
+          </div>
+          <div class="arch-card">
+            <div class="arch-k">Modelo</div>
+            <div class="arch-v">YOLO</div>
+          </div>
+          <div class="arch-card">
+            <div class="arch-k">Dataset</div>
+            <div class="arch-v">Roboflow</div>
+          </div>
+        </div>
       </section>
 
-      <!-- DEMO -->
-      <section id="demo" class="section">
+      <!-- PROBAR -->
+      <section id="try" class="section">
         <h3>Prueba el modelo</h3>
 
         <div class="card">
-          <p class="card-subtitle">Sube una imagen y el backend responderá si detecta casco.</p>
+          <p class="card-subtitle">Sube una imagen y el modelo entrenado responderá si detecta casco.</p>
 
           <div class="demo-row">
-            <!-- input real oculto -->
             <input type="file" id="imageUpload" class="file-input" accept="image/*" />
-
-            <!-- botón bonito que abre el selector -->
             <label for="imageUpload" class="btn-secondary">Seleccionar imagen</label>
 
-            <!-- nombre del archivo (con ellipsis) -->
-            <span id="fileName" class="file-name" title="Ningún archivo seleccionado">
-              Ningún archivo seleccionado
-            </span>
-
-            <button id="sendBtn" class="btn-primary">Analizar Imagen</button>
+            <button id="sendBtn" class="btn-primary">Detectar cascos</button>
           </div>
 
           <div id="result" class="result"></div>
 
           <div class="preview-wrap">
-            <img id="preview" alt="" />
+            <div class="preview-stage" id="previewStage">
+              <div class="scanline" id="scanline" aria-hidden="true"></div>
+              <img id="preview" alt="" />
+              <div class="preview-hint" id="previewHint">Tu imagen aparecerá aquí</div>
+            </div>
           </div>
+
         </div>
       </section>
 
       <!-- EQUIPO -->
       <section id="team" class="section">
         <h3>Equipo</h3>
-        <p>Integración de múltiples IAs, dataset en Roboflow y despliegue web para múltiples usuarios.</p>
+        <p>Integración de IA, construcción de dataset en Roboflow y despliegue web para múltiples usuarios.</p>
       </section>
 
       <div class="spacer"></div>
