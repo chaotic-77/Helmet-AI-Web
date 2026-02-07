@@ -30,13 +30,15 @@
   background: rgba(0,0,0,0.35);
   backdrop-filter: blur(6px);
   padding: 14px 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
-.navbar .container {
+.nav-inner{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 18px;
 }
 
 .brand {
@@ -47,11 +49,11 @@
   color: white;
 }
 
-/* Logo ULACIT más grande */
-.brand img {
-  height: 54px;         /* <-- subido */
+.brand-logo {
+  height: 56px;           /* <-- más grande */
   width: auto;
   object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
 }
 
 .title {
@@ -70,41 +72,42 @@
   color: white;
   text-decoration: none;
   font-weight: 600;
-  opacity: 0.95;
+  opacity: 0.92;
 }
 
-.nav-links a:hover {
+.nav-links a:hover{
   opacity: 1;
   text-decoration: underline;
 }
 
 /* HERO */
 .hero {
-  padding: 90px 0 60px 0;
+  padding: 86px 0 50px 0;
 }
 
-.hero .container {
-  display: flex;
-  justify-content: space-between;
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 34px;
   align-items: center;
-  gap: 40px;
 }
 
-.hero h2 {
-  font-size: 42px;
-  margin-bottom: 14px;
-  line-height: 1.15;
+.hero-left h2 {
+  font-size: 44px;
+  line-height: 1.05;
+  margin-bottom: 12px;
 }
 
-.hero p {
+.hero-left p {
   opacity: 0.92;
-  line-height: 1.5;
-  max-width: 540px;
+  margin-bottom: 14px;
+  max-width: 56ch;
 }
 
 .meta {
+  margin-top: 12px;
   font-size: 13px;
-  opacity: 0.85;
+  opacity: 0.82;
 }
 
 /* Tarjeta del hero */
@@ -112,9 +115,18 @@
   background: rgba(0,0,0,0.35);
   padding: 22px;
   border-radius: 14px;
-  backdrop-filter: blur(10px);
-  max-width: 340px;
-  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.hero-card h4{
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.hero-card p{
+  opacity: 0.9;
+  line-height: 1.35;
 }
 
 .badge {
@@ -128,124 +140,142 @@
 
 /* SECCIONES */
 .section {
-  padding: 55px 0;
+  padding: 56px 0;
   text-align: center;
 }
 
 .section h3 {
   margin-bottom: 10px;
-  font-size: 22px;
+  font-size: 26px;
+}
+
+.section p {
+  opacity: 0.92;
 }
 
 /* CARD DEMO */
 .card {
   margin-top: 18px;
-  padding: 26px;
+  padding: 24px;
   background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(10px);
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-/* DEMO ROW */
+.card-subtitle{
+  opacity: 0.9;
+}
+
+/* demo controls */
 .demo-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
 }
 
-/* Oculta el input feo */
+/* input file real oculto */
 .file-input {
   display: none;
 }
 
-/* Botón primario */
+/* nombre de archivo: truncado, no se sale */
+.file-name {
+  display: block;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.92);
+  text-align: left;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* BOTONES */
 .btn-primary {
   background: #ffc400;
   border: none;
-  padding: 10px 18px;
+  padding: 10px 16px;
   font-weight: 900;
   cursor: pointer;
-  border-radius: 8px;
-  color: #151515;
+  border-radius: 10px;
 }
 
-.btn-primary:hover {
-  filter: brightness(0.98);
-}
-
-.btn-primary:disabled {
+.btn-primary:disabled{
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-/* Botón secundario (seleccionar imagen) */
-.btn-secondary {
-  background: rgba(255,255,255,0.14);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: white;
-  padding: 10px 18px;
-  font-weight: 800;
+.btn-secondary{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 10px;
   cursor: pointer;
-  border-radius: 8px;
+  font-weight: 800;
+  color: white;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+  user-select: none;
 }
 
-.btn-secondary:hover {
-  background: rgba(255,255,255,0.18);
-}
-
-/* Nombre de archivo */
-.file-name {
-  margin-top: 12px;
-  font-size: 13px;
-  opacity: 0.9;
-  min-height: 18px; /* reserva espacio aunque no haya archivo */
+.btn-secondary:hover{
+  background: rgba(255,255,255,0.14);
 }
 
 /* RESULTADOS */
-#result {
-  margin-top: 14px;
+.result {
+  margin-top: 16px;
   font-size: 18px;
   font-weight: 900;
+  line-height: 1.35;
 }
 
-#result small {
-  display: inline-block;
+.result small{
+  display: block;
   margin-top: 6px;
-  opacity: 0.85;
-  font-weight: 500;
+  font-weight: 600;
+  opacity: 0.9;
 }
 
 /* PREVIEW */
+.preview-wrap{
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
 #preview {
-  display: none; /* se activa con JS */
-  margin: 18px auto 0 auto;
-  max-width: 520px;
+  display: none; /* se activa por JS cuando hay imagen */
+  max-width: min(520px, 92vw);
   width: 100%;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .hero-grid{
+    grid-template-columns: 1fr;
+  }
+  .demo-row{
+    grid-template-columns: 1fr;
+  }
+  .file-name{
+    text-align: center;
+  }
 }
 
 /* ESPACIO FINAL */
 .spacer {
   height: 80px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 860px) {
-  .hero .container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .hero-card {
-    width: 100%;
-    max-width: none;
-  }
-
-  .nav-links {
-    gap: 14px;
-  }
 }

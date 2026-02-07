@@ -11,9 +11,9 @@
   <div class="page-bg">
     <!-- NAVBAR -->
     <nav class="navbar">
-      <div class="container">
+      <div class="container nav-inner">
         <a class="brand" href="#">
-          <img src="./assets/ulacit-logo.png" alt="ULACIT" />
+          <img class="brand-logo" src="./assets/ulacit-logo.png" alt="ULACIT" />
           <span class="title">Helmet AI</span>
         </a>
 
@@ -27,24 +27,25 @@
 
     <!-- HERO -->
     <header class="hero">
-      <div class="container">
-        <div>
+      <div class="container hero-grid">
+        <div class="hero-left">
           <h2>Sistema de Detección Inteligente de Cascos</h2>
           <p>Basado en visión por computadora (YOLO). Arquitectura web lista para producción académica.</p>
 
-          <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
+          <button class="btn-primary"
+            onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
             Ver Demo
           </button>
 
-          <div class="meta" style="margin-top:12px;">
+          <div class="meta">
             Proyecto académico • ULACIT • Frontend (Vercel) + Backend (Render)
           </div>
         </div>
 
         <div class="hero-card">
           <span class="badge">Estado</span>
-          <h4 style="margin-top:10px;">Backend conectado ✅</h4>
-          <p style="opacity:0.9;">
+          <h4>Backend conectado ✅</h4>
+          <p>
             Cuando el modelo <b>best.pt</b> esté disponible, el sistema pasa automáticamente a detección real.
           </p>
         </div>
@@ -65,29 +66,28 @@
         <h3>Prueba el modelo</h3>
 
         <div class="card">
-          <p>Sube una imagen y el backend responderá si detecta casco.</p>
+          <p class="card-subtitle">Sube una imagen y el backend responderá si detecta casco.</p>
 
-          <div class="demo-row" style="margin-top:12px;">
-            <!-- Input real (oculto) -->
-            <input class="file-input" type="file" id="imageUpload" accept="image/*" />
+          <div class="demo-row">
+            <!-- input real oculto -->
+            <input type="file" id="imageUpload" class="file-input" accept="image/*" />
 
-            <!-- Botón bonito para abrir el selector -->
-            <button id="pickBtn" class="btn-secondary" type="button">
-              Seleccionar imagen
-            </button>
+            <!-- botón bonito que abre el selector -->
+            <label for="imageUpload" class="btn-secondary">Seleccionar imagen</label>
 
-            <!-- Botón de enviar -->
-            <button id="sendBtn" class="btn-primary" type="button">
-              Analizar Imagen
-            </button>
+            <!-- nombre del archivo (con ellipsis) -->
+            <span id="fileName" class="file-name" title="Ningún archivo seleccionado">
+              Ningún archivo seleccionado
+            </span>
+
+            <button id="sendBtn" class="btn-primary">Analizar Imagen</button>
           </div>
 
-          <!-- Nombre del archivo -->
-          <div id="fileName" class="file-name"></div>
+          <div id="result" class="result"></div>
 
-          <div id="result"></div>
-
-          <img id="preview" alt="" />
+          <div class="preview-wrap">
+            <img id="preview" alt="" />
+          </div>
         </div>
       </section>
 

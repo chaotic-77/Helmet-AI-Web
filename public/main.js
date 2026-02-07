@@ -3,10 +3,7 @@
   const preview = document.getElementById("preview");
   const sendBtn = document.getElementById("sendBtn");
   const result = document.getElementById("result");
-
-  // NUEVOS: selector bonito + nombre del archivo
-  const pickBtn = document.getElementById("pickBtn");
-  const fileName = document.getElementById("fileName");
+  const fileNameEl = document.getElementById("fileName");
 
   const API_BASE = "https://helmet-ai-web-backend.onrender.com";
 
@@ -14,28 +11,32 @@
     result.innerHTML = html;
   };
 
-  // Botón "Seleccionar imagen" abre el input oculto
-  if (pickBtn) {
-    pickBtn.addEventListener("click", () => input.click());
-  }
+  const setFileName = (name) => {
+    const safe = name || "Ningún archivo seleccionado";
+    fileNameEl.textContent = safe;
+    fileNameEl.title = safe;
+  };
 
   input.addEventListener("change", () => {
     const file = input.files?.[0];
-
     if (!file) {
-      if (fileName) fileName.textContent = "";
+      setFileName("");
+      preview.style.display = "none";
       preview.removeAttribute("src");
-      preview.removeAttribute("alt");
       setStatus("");
       return;
     }
 
-    // Mostrar nombre del archivo debajo
-    if (fileName) fileName.textContent = `Archivo: ${file.name}`;
+    setFileName(file.name);
 
-    // Preview local
-    preview.src = URL.createObjectURL(file);
+    // Preview local (antes de enviar)
+    const url = URL.createObjectURL(file);
+    preview.src = url;
     preview.alt = "Imagen seleccionada";
+    preview.style.display = "block";
+
+    // limpia status anterior
+    setStatus("");
   });
 
   sendBtn.addEventListener("click", async () => {
@@ -45,9 +46,10 @@
       return;
     }
 
-    // UI: bloquea botón mientras procesa
     sendBtn.disabled = true;
+    const oldText = sendBtn.textContent;
     sendBtn.textContent = "Analizando...";
+
     setStatus("Analizando imagen con IA...");
 
     const formData = new FormData();
@@ -59,7 +61,6 @@
         body: formData
       });
 
-      // Intentar leer JSON; si falla, mostrar texto crudo
       let data = null;
       const contentType = resp.headers.get("content-type") || "";
       if (contentType.includes("application/json")) {
@@ -83,15 +84,19 @@
       );
 
       if (data.message) {
-        result.innerHTML += `<br><small>${data.message}</small>`;
+        result.innerHTML += `<small>${data.message}</small>`;
       }
+
     } catch (e) {
       console.error(e);
       setStatus("🔴 No se pudo conectar con el backend o hubo un error de respuesta.");
     } finally {
-      // UI: reactivar botón
       sendBtn.disabled = false;
-      sendBtn.textContent = "Analizar Imagen";
+      sendBtn.textContent = oldText || "Analizar Imagen";
     }
   });
+
+  // init
+  setFileName("");
+  setStatus("");
 })();
