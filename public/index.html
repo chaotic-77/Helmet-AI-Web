@@ -10,35 +10,35 @@
 <body>
   <div class="page-bg">
 
-    <!-- NAVBAR (grande arriba -> pequeña con scroll + logos a esquinas) -->
+    <!-- NAVBAR -->
     <nav class="navbar" id="topbar">
       <div class="container nav-inner">
 
-        <!-- Logo izquierdo (aparece en scroll) -->
-        <a class="corner-logo corner-logo--left" href="#top" aria-label="Inicio">
+        <!-- Logo izquierdo -->
+        <a class="corner-logo" href="#top">
           <img src="./assets/ulacit-logo.png" alt="ULACIT" />
         </a>
 
-        <!-- Centro: marca + links -->
+        <!-- Centro -->
         <div class="nav-center">
-          <a class="brand" href="#top" aria-label="Helmet AI inicio">
+
+          <a class="brand" href="#top">
             <img class="brand-logo" src="./assets/ulacit-logo.png" alt="ULACIT" />
             <span class="title">Helmet AI</span>
           </a>
 
-          <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
-            ☰
-          </button>
+          <button class="nav-toggle" id="navToggle">☰</button>
 
           <ul class="nav-links" id="navLinks">
-            <li><a href="#about">Proyecto</a></li>
-            <li><a href="#try">Probar</a></li>
+            <li><a href="#" id="openProyecto">Proyecto</a></li>
+            <li><a href="#" id="openManual">Manual</a></li>
             <li><a href="#team">Equipo</a></li>
           </ul>
+
         </div>
 
-        <!-- Logo derecho (aparece en scroll) -->
-        <a class="corner-logo corner-logo--right" href="#top" aria-label="Inicio">
+        <!-- Logo derecho -->
+        <a class="corner-logo" href="#top">
           <img src="./assets/ulacit-logo.png" alt="ULACIT" />
         </a>
 
@@ -80,39 +80,23 @@
     </header>
 
     <div class="container">
-      <!-- SOBRE EL PROYECTO -->
+
+      <!-- SOBRE -->
       <section id="about" class="section">
         <h3>Sobre el proyecto</h3>
         <p>
           Helmet AI utiliza visión por computadora y modelos tipo YOLO para detectar el uso adecuado de cascos de seguridad.
         </p>
-
-        <div class="arch">
-          <div class="arch-card">
-            <div class="arch-k">Frontend</div>
-            <div class="arch-v">Vercel</div>
-          </div>
-          <div class="arch-card">
-            <div class="arch-k">Backend</div>
-            <div class="arch-v">Render</div>
-          </div>
-          <div class="arch-card">
-            <div class="arch-k">Modelo</div>
-            <div class="arch-v">YOLO</div>
-          </div>
-          <div class="arch-card">
-            <div class="arch-k">Dataset</div>
-            <div class="arch-v">Roboflow</div>
-          </div>
-        </div>
       </section>
 
-      <!-- PROBAR -->
-      <section id="try" class="section">
+      <!-- DEMO -->
+      <section class="section">
         <h3>Prueba el modelo</h3>
 
         <div class="card">
-          <p class="card-subtitle">Sube una imagen y el modelo entrenado responderá si detecta casco.</p>
+          <p class="card-subtitle">
+            Sube una imagen y el modelo entrenado responderá si detecta casco.
+          </p>
 
           <div class="demo-row">
             <input type="file" id="imageUpload" class="file-input" accept="image/*" />
@@ -125,8 +109,8 @@
 
           <div class="preview-wrap">
             <div class="preview-stage" id="previewStage">
-              <div class="scanline" id="scanline" aria-hidden="true"></div>
-              <img id="preview" alt="" />
+              <div class="scanline"></div>
+              <img id="preview" />
               <div class="preview-hint" id="previewHint">Tu imagen aparecerá aquí</div>
             </div>
           </div>
@@ -137,7 +121,7 @@
       <!-- EQUIPO -->
       <section id="team" class="section">
         <h3>Equipo</h3>
-        <p>Integración de IA, construcción de dataset en Roboflow y despliegue web para múltiples usuarios.</p>
+        <p>Integración de IA, dataset Roboflow y despliegue web.</p>
       </section>
 
       <div class="spacer"></div>
