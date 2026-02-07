@@ -8,120 +8,123 @@
 </head>
 
 <body>
-  <div class="page-bg">
+<div class="page-bg">
 
-    <nav class="navbar" id="topbar">
-      <div class="container nav-inner">
+<!-- NAVBAR -->
+<nav class="navbar" id="topbar">
+  <div class="container nav-inner">
 
-        <a class="corner-logo corner-logo--left" href="#top">
-          <img src="./assets/ulacit-logo.png" alt="ULACIT" />
-        </a>
+    <a class="corner-logo left" href="#">
+      <img src="./assets/ulacit-logo.png" alt="ULACIT">
+    </a>
 
-        <div class="nav-center">
-          <a class="brand" href="#top">
-            <img class="brand-logo" src="./assets/ulacit-logo.png" alt="ULACIT" />
-            <span class="title">Helmet AI</span>
-          </a>
-
-          <button class="nav-toggle" id="navToggle">☰</button>
-
-          <ul class="nav-links" id="navLinks">
-            <li><a href="#" id="btnProyecto">Proyecto</a></li>
-            <li><a href="#" id="btnManual">Manual</a></li>
-            <li><a href="#team">Equipo</a></li>
-          </ul>
-        </div>
-
-        <a class="corner-logo corner-logo--right" href="#top">
-          <img src="./assets/ulacit-logo.png" alt="ULACIT" />
-        </a>
-
+    <div class="nav-center">
+      <div class="brand">
+        <img class="brand-logo" src="./assets/ulacit-logo.png" alt="ULACIT">
+        <span class="title">Helmet AI</span>
       </div>
-    </nav>
 
-    <!-- HERO -->
-    <header class="hero" id="top">
-      <div class="container hero-grid">
-        <div class="hero-left">
-          <div class="pill">Preview académico • Visión por computadora</div>
-          <h2>DETECCIÓN DE CASCOS CON IA</h2>
-          <p>Sistema web para identificar cascos usando modelo YOLO.</p>
-          <div class="meta">ULACIT • Vercel • Render • Roboflow</div>
-        </div>
-
-        <div class="hero-right">
-          <div class="hero-mini">
-            <div class="hero-mini__title">Flujo</div>
-            <div class="flow-steps">
-              <div class="flow-step">1) Subir</div>
-              <div class="flow-arrow">→</div>
-              <div class="flow-step">2) Analizar</div>
-              <div class="flow-arrow">→</div>
-              <div class="flow-step">3) Resultados</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="container">
-      <section id="about" class="section">
-        <h3>Sobre el proyecto</h3>
-        <p>Detección automática de cascos mediante visión por computadora.</p>
-      </section>
-
-      <section id="try" class="section">
-        <h3>Prueba el modelo</h3>
-        <div class="card">
-
-          <div class="demo-row">
-            <input type="file" id="imageUpload" class="file-input" accept="image/*" />
-            <label for="imageUpload" class="btn-secondary">Seleccionar imagen</label>
-            <button id="sendBtn" class="btn-primary">Detectar cascos</button>
-          </div>
-
-          <div id="result" class="result"></div>
-
-          <div class="preview-wrap">
-            <div class="preview-stage" id="previewStage">
-              <div class="scanline"></div>
-              <img id="preview" />
-              <div class="preview-hint" id="previewHint">Tu imagen aparecerá aquí</div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <section id="team" class="section">
-        <h3>Equipo</h3>
-        <p>IA + Dataset + Backend + Web</p>
-      </section>
+      <ul class="nav-links">
+        <li><button data-modal="modalProyecto">Proyecto</button></li>
+        <li><button data-modal="modalManual">Manual</button></li>
+        <li><button data-modal="modalEquipo">Equipo</button></li>
+      </ul>
     </div>
 
-    <!-- MODAL PROYECTO -->
-    <div class="modal" id="modalProyecto">
-      <div class="modal-content">
-        <button class="modal-close" data-close>&times;</button>
-        <h2>Proyecto Helmet AI</h2>
-        <p>Sistema basado en visión por computadora para detección de cascos.</p>
-      </div>
-    </div>
+    <a class="corner-logo right" href="#">
+      <img src="./assets/ulacit-logo.png" alt="ULACIT">
+    </a>
 
-    <!-- MODAL MANUAL -->
-    <div class="modal" id="modalManual">
-      <div class="modal-content">
-        <button class="modal-close" data-close>&times;</button>
-        <h2>Manual de uso</h2>
-        <ol>
-          <li>Selecciona una imagen</li>
-          <li>Presiona detectar</li>
-          <li>Espera resultado</li>
-        </ol>
-      </div>
-    </div>
-
-    <script src="./main.js"></script>
   </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container hero-grid">
+
+    <div class="hero-left">
+      <div class="pill">Preview académico • Visión por computadora</div>
+      <h2>DETECCIÓN DE CASCOS CON IA</h2>
+      <p>Sistema web para identificar cascos de seguridad usando modelos YOLO.</p>
+      <div class="meta">ULACIT • Frontend (Vercel) + Backend (Render) • Dataset (Roboflow)</div>
+    </div>
+
+    <div class="hero-mini">
+      <div class="hero-mini__title">Flujo</div>
+      <div class="flow-steps">
+        <div class="flow-step">1) Subir</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">2) Analizar</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">3) Resultados</div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="container">
+
+<section class="section">
+<h3>Prueba el modelo</h3>
+
+<div class="card">
+<p class="card-subtitle">Sube una imagen y el modelo entrenado responderá si detecta casco.</p>
+
+<div class="demo-row">
+<input type="file" id="imageUpload" class="file-input" accept="image/*">
+<label for="imageUpload" class="btn-secondary">Seleccionar imagen</label>
+<button id="sendBtn" class="btn-primary">Detectar cascos</button>
+</div>
+
+<div id="result" class="result"></div>
+
+<div class="preview-wrap">
+<div class="preview-stage" id="previewStage">
+<div class="scanline"></div>
+<img id="preview">
+<div class="preview-hint" id="previewHint">Tu imagen aparecerá aquí</div>
+</div>
+</div>
+
+</div>
+</section>
+
+</div>
+
+<!-- MODAL PROYECTO -->
+<div class="modal" id="modalProyecto">
+<div class="modal-content">
+<button class="close">&times;</button>
+<h2>Proyecto</h2>
+<p>Sistema académico basado en visión por computadora para detectar el uso correcto de cascos de seguridad utilizando modelos tipo YOLO y despliegue web.</p>
+</div>
+</div>
+
+<!-- MODAL MANUAL -->
+<div class="modal" id="modalManual">
+<div class="modal-content">
+<button class="close">&times;</button>
+<h2>Manual de usuario</h2>
+<p>1. Selecciona una imagen.<br>
+2. Presiona detectar.<br>
+3. Observa el resultado del modelo.</p>
+</div>
+</div>
+
+<!-- MODAL EQUIPO -->
+<div class="modal" id="modalEquipo">
+<div class="modal-content equipo">
+<img src="./assets/ulacit-logo.png" class="equipo-logo">
+<h2>Equipo del proyecto</h2>
+<p>Esteban Zamora Villalobos</p>
+<p>Luis Sanabria Suazo</p>
+<p>Ian Montero Rodríguez</p>
+<button class="close">&times;</button>
+</div>
+</div>
+
+<script src="./main.js"></script>
+</div>
 </body>
 </html>
