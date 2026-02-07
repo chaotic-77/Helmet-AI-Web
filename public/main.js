@@ -1,77 +1,69 @@
 (() => {
 
-  const input = document.getElementById("imageUpload");
-  const preview = document.getElementById("preview");
-  const sendBtn = document.getElementById("sendBtn");
-  const result = document.getElementById("result");
-  const previewHint = document.getElementById("previewHint");
-  const previewStage = document.getElementById("previewStage");
-  const topbar = document.getElementById("topbar");
+const input = document.getElementById("imageUpload");
+const preview = document.getElementById("preview");
+const sendBtn = document.getElementById("sendBtn");
+const result = document.getElementById("result");
+const previewHint = document.getElementById("previewHint");
+const previewStage = document.getElementById("previewStage");
+const topbar = document.getElementById("topbar");
 
-  const API_BASE = "https://helmet-ai-web-backend.onrender.com";
+const modalProyecto = document.getElementById("modalProyecto");
+const modalManual = document.getElementById("modalManual");
 
-  const setStatus = html => result.innerHTML = html || "";
+document.getElementById("btnProyecto").onclick=e=>{
+e.preventDefault();
+modalProyecto.classList.add("active");
+};
 
-  /* NAVBAR SCROLL */
-  const onScroll = () => {
-    const scrolled = window.scrollY > 60;
-    topbar.classList.toggle("scrolled", scrolled);
-  };
+document.getElementById("btnManual").onclick=e=>{
+e.preventDefault();
+modalManual.classList.add("active");
+};
 
-  window.addEventListener("scroll", onScroll);
-  onScroll();
+document.querySelectorAll("[data-close]").forEach(btn=>{
+btn.onclick=()=>btn.closest(".modal").classList.remove("active");
+});
 
-  /* IMAGE PREVIEW */
-  input.addEventListener("change", () => {
-    const file = input.files?.[0];
+window.addEventListener("keydown",e=>{
+if(e.key==="Escape"){
+document.querySelectorAll(".modal").forEach(m=>m.classList.remove("active"));
+}
+});
 
-    if (!file) {
-      preview.style.display = "none";
-      previewHint.style.display = "block";
-      return;
-    }
+window.addEventListener("scroll",()=>{
+topbar.classList.toggle("scrolled",window.scrollY>70);
+});
 
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
-    previewHint.style.display = "none";
-  });
+input.addEventListener("change",()=>{
+const file=input.files[0];
+if(!file)return;
+const url=URL.createObjectURL(file);
+preview.src=url;
+preview.style.display="block";
+previewHint.style.display="none";
+});
 
-  /* ANALYZE */
-  sendBtn.addEventListener("click", async () => {
+sendBtn.addEventListener("click",async()=>{
+const file=input.files[0];
+if(!file)return alert("Sube imagen primero");
 
-    const file = input.files?.[0];
-    if (!file) return alert("Sube una imagen primero.");
+sendBtn.disabled=true;
+previewStage.classList.add("scanning");
 
-    sendBtn.disabled = true;
-    sendBtn.textContent = "Analizando...";
-    previewStage.classList.add("scanning");
+const formData=new FormData();
+formData.append("image",file);
 
-    const formData = new FormData();
-    formData.append("image", file);
+try{
+const resp=await fetch("https://helmet-ai-web-backend.onrender.com/predict",{method:"POST",body:formData});
+const data=await resp.json();
+result.innerHTML=data.detected?"🟢 Casco detectado":"🔴 No se detectó casco";
+}catch{
+result.innerHTML="Error conectando con servidor";
+}
 
-    try {
-
-      const resp = await fetch(`${API_BASE}/predict`, {
-        method: "POST",
-        body: formData
-      });
-
-      const data = await resp.json();
-
-      setStatus(
-        data.detected
-          ? "🟢 Casco detectado"
-          : "🔴 No se detectó casco"
-      );
-
-    } catch (e) {
-      setStatus("🔴 Error conectando con el backend");
-    }
-
-    previewStage.classList.remove("scanning");
-    sendBtn.disabled = false;
-    sendBtn.textContent = "Detectar cascos";
-
-  });
+sendBtn.disabled=false;
+previewStage.classList.remove("scanning");
+});
 
 })();

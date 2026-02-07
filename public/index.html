@@ -10,18 +10,14 @@
 <body>
   <div class="page-bg">
 
-    <!-- NAVBAR -->
     <nav class="navbar" id="topbar">
       <div class="container nav-inner">
 
-        <!-- Logo izquierdo -->
-        <a class="corner-logo" href="#top">
+        <a class="corner-logo corner-logo--left" href="#top">
           <img src="./assets/ulacit-logo.png" alt="ULACIT" />
         </a>
 
-        <!-- Centro -->
         <div class="nav-center">
-
           <a class="brand" href="#top">
             <img class="brand-logo" src="./assets/ulacit-logo.png" alt="ULACIT" />
             <span class="title">Helmet AI</span>
@@ -30,15 +26,13 @@
           <button class="nav-toggle" id="navToggle">☰</button>
 
           <ul class="nav-links" id="navLinks">
-            <li><a href="#" id="openProyecto">Proyecto</a></li>
-            <li><a href="#" id="openManual">Manual</a></li>
+            <li><a href="#" id="btnProyecto">Proyecto</a></li>
+            <li><a href="#" id="btnManual">Manual</a></li>
             <li><a href="#team">Equipo</a></li>
           </ul>
-
         </div>
 
-        <!-- Logo derecho -->
-        <a class="corner-logo" href="#top">
+        <a class="corner-logo corner-logo--right" href="#top">
           <img src="./assets/ulacit-logo.png" alt="ULACIT" />
         </a>
 
@@ -48,23 +42,16 @@
     <!-- HERO -->
     <header class="hero" id="top">
       <div class="container hero-grid">
-
         <div class="hero-left">
           <div class="pill">Preview académico • Visión por computadora</div>
           <h2>DETECCIÓN DE CASCOS CON IA</h2>
-          <p>
-            Sistema web para identificar cascos de seguridad en imágenes usando un modelo tipo YOLO.
-          </p>
-
-          <div class="meta">
-            ULACIT • Frontend (Vercel) + Backend (Render) • Dataset (Roboflow)
-          </div>
+          <p>Sistema web para identificar cascos usando modelo YOLO.</p>
+          <div class="meta">ULACIT • Vercel • Render • Roboflow</div>
         </div>
 
         <div class="hero-right">
           <div class="hero-mini">
             <div class="hero-mini__title">Flujo</div>
-
             <div class="flow-steps">
               <div class="flow-step">1) Subir</div>
               <div class="flow-arrow">→</div>
@@ -72,36 +59,24 @@
               <div class="flow-arrow">→</div>
               <div class="flow-step">3) Resultados</div>
             </div>
-
           </div>
         </div>
-
       </div>
     </header>
 
     <div class="container">
-
-      <!-- SOBRE -->
       <section id="about" class="section">
         <h3>Sobre el proyecto</h3>
-        <p>
-          Helmet AI utiliza visión por computadora y modelos tipo YOLO para detectar el uso adecuado de cascos de seguridad.
-        </p>
+        <p>Detección automática de cascos mediante visión por computadora.</p>
       </section>
 
-      <!-- DEMO -->
-      <section class="section">
+      <section id="try" class="section">
         <h3>Prueba el modelo</h3>
-
         <div class="card">
-          <p class="card-subtitle">
-            Sube una imagen y el modelo entrenado responderá si detecta casco.
-          </p>
 
           <div class="demo-row">
             <input type="file" id="imageUpload" class="file-input" accept="image/*" />
             <label for="imageUpload" class="btn-secondary">Seleccionar imagen</label>
-
             <button id="sendBtn" class="btn-primary">Detectar cascos</button>
           </div>
 
@@ -118,13 +93,32 @@
         </div>
       </section>
 
-      <!-- EQUIPO -->
       <section id="team" class="section">
         <h3>Equipo</h3>
-        <p>Integración de IA, dataset Roboflow y despliegue web.</p>
+        <p>IA + Dataset + Backend + Web</p>
       </section>
+    </div>
 
-      <div class="spacer"></div>
+    <!-- MODAL PROYECTO -->
+    <div class="modal" id="modalProyecto">
+      <div class="modal-content">
+        <button class="modal-close" data-close>&times;</button>
+        <h2>Proyecto Helmet AI</h2>
+        <p>Sistema basado en visión por computadora para detección de cascos.</p>
+      </div>
+    </div>
+
+    <!-- MODAL MANUAL -->
+    <div class="modal" id="modalManual">
+      <div class="modal-content">
+        <button class="modal-close" data-close>&times;</button>
+        <h2>Manual de uso</h2>
+        <ol>
+          <li>Selecciona una imagen</li>
+          <li>Presiona detectar</li>
+          <li>Espera resultado</li>
+        </ol>
+      </div>
     </div>
 
     <script src="./main.js"></script>

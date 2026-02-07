@@ -1,248 +1,69 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Roboto,Arial,sans-serif;}
 
-.page-bg{
-  min-height:100vh;
-  background:
-    linear-gradient(rgba(74,0,130,0.75), rgba(74,0,130,0.88)),
-    url("./assets/ulacit-campus.jpg");
-  background-size: cover;
-  background-position:center;
-  background-attachment:fixed;
-  color:white;
-}
+.page-bg{min-height:100vh;background:linear-gradient(rgba(74,0,130,.75),rgba(74,0,130,.88)),url("./assets/ulacit-campus.jpg");background-size:cover;background-position:center;color:white;}
 
-.container{
-  width:100%;
-  max-width:1100px;
-  margin:auto;
-  padding:0 20px;
-}
+.container{max-width:1100px;margin:auto;padding:0 20px;}
 
-/* NAVBAR */
+.navbar{position:sticky;top:0;z-index:50;height:86px;display:flex;align-items:center;background:rgba(0,0,0,.30);transition:.25s;}
 
-.navbar{
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(8px);
-  height: 86px;
-  display:flex;
-  align-items:center;
-  transition: all .25s ease;
-}
+.navbar.scrolled{height:64px;background:rgba(0,0,0,.75);}
 
-.navbar.scrolled{
-  height:64px;
-  background: rgba(0,0,0,0.70);
-}
+.nav-inner{display:grid;grid-template-columns:120px 1fr 120px;width:100%;align-items:center;}
 
-.nav-inner{
-  display:grid;
-  grid-template-columns: 80px 1fr 80px;
-  align-items:center;
-  width:100%;
-}
+.nav-center{display:flex;align-items:center;justify-content:center;gap:40px;}
 
-.corner-logo img{
-  width:48px;
-  transition: .2s;
-  opacity:.9;
-}
+.brand{display:flex;align-items:center;gap:12px;color:white;text-decoration:none;}
 
-.navbar.scrolled .corner-logo img{
-  width:56px;
-}
+.brand-logo{height:56px;}
 
-/* CENTRO */
+.navbar.scrolled .brand-logo{height:50px;}
 
-.nav-center{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:40px;
-}
+.corner-logo img{width:46px;opacity:0;}
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  text-decoration:none;
-  color:white;
-}
+.navbar.scrolled .corner-logo img{width:60px;opacity:1;}
 
-.brand-logo{
-  height:52px;
-}
+.nav-links{display:flex;gap:22px;margin-left:auto;list-style:none;}
 
-.title{
-  font-size:20px;
-  font-weight:900;
-}
+.nav-links a{color:white;text-decoration:none;font-weight:700;}
 
-.nav-links{
-  margin-left:auto;
-  display:flex;
-  gap:22px;
-  list-style:none;
-}
+.hero{padding:70px 0;}
 
-.nav-links a{
-  color:white;
-  text-decoration:none;
-  font-weight:700;
-}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:34px;}
 
-.nav-toggle{
-  display:none;
-}
+.hero-mini{text-align:center;background:rgba(0,0,0,.35);padding:18px;border-radius:16px;}
 
-/* HERO */
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:8px;}
 
-.hero{
-  padding:78px 0 44px;
-}
+.flow-step{background:rgba(255,255,255,.1);padding:10px 18px;border-radius:14px;font-weight:900;}
 
-.hero-grid{
-  display:grid;
-  grid-template-columns: 1.2fr .8fr;
-  gap:34px;
-  align-items:center;
-}
+.flow-arrow{margin:0 2px;}
 
-.pill{
-  padding:8px 12px;
-  border-radius:999px;
-  background:rgba(0,0,0,0.30);
-  margin-bottom:12px;
-  font-weight:800;
-  font-size:12px;
-}
+.section{padding:54px 0;text-align:center;}
 
-.hero-left h2{
-  font-size:46px;
-  margin-bottom:12px;
-}
+.card{margin-top:18px;padding:24px;background:rgba(0,0,0,.38);border-radius:16px;}
 
-.meta{
-  margin-top:10px;
-  font-size:13px;
-  opacity:.8;
-}
+.demo-row{display:flex;gap:12px;justify-content:center;margin-top:16px;}
 
-/* FLOW */
+.file-input{display:none;}
 
-.hero-mini{
-  background: rgba(0,0,0,0.35);
-  border-radius:16px;
-  padding:18px;
-  text-align:center;
-}
+.btn-primary{background:#ffc400;border:none;padding:10px 16px;font-weight:950;border-radius:12px;}
 
-.flow-steps{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-}
+.btn-secondary{padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);}
 
-.flow-step{
-  background: rgba(255,255,255,0.12);
-  padding:10px 16px;
-  border-radius:12px;
-  font-weight:900;
-}
+.result{margin-top:14px;font-size:18px;font-weight:950;}
 
-.flow-arrow{
-  font-size:16px;
-}
+.preview-wrap{margin-top:18px;display:flex;justify-content:center;}
 
-/* DEMO */
+.preview-stage{position:relative;width:min(560px,92vw);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);}
 
-.section{
-  padding:54px 0;
-  text-align:center;
-}
+#preview{display:none;width:100%;}
 
-.card{
-  margin-top:18px;
-  padding:24px;
-  background: rgba(0,0,0,0.40);
-  border-radius:16px;
-}
+.preview-hint{padding:46px;text-align:center;}
 
-.demo-row{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  margin-top:16px;
-}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:9999;}
 
-.file-input{ display:none; }
+.modal.active{display:flex;}
 
-.btn-primary{
-  background:#ffc400;
-  border:none;
-  padding:10px 16px;
-  font-weight:900;
-  border-radius:12px;
-  cursor:pointer;
-}
+.modal-content{background:#120022;padding:40px;border-radius:18px;max-width:700px;width:90%;position:relative;}
 
-.btn-secondary{
-  padding:10px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:800;
-  background: rgba(255,255,255,0.10);
-}
-
-.result{
-  margin-top:14px;
-  font-size:18px;
-  font-weight:900;
-}
-
-.preview-stage{
-  margin-top:18px;
-  position:relative;
-  width:min(560px,92vw);
-  margin-inline:auto;
-  border-radius:16px;
-  overflow:hidden;
-}
-
-#preview{
-  display:none;
-  width:100%;
-}
-
-.preview-hint{
-  padding:46px;
-  opacity:.85;
-}
-
-.scanline{
-  position:absolute;
-  height:3px;
-  width:100%;
-  background:white;
-  opacity:0;
-}
-
-.preview-stage.scanning .scanline{
-  opacity:1;
-  animation:scan 1.2s linear infinite;
-}
-
-@keyframes scan{
-  0%{transform:translateY(-10px)}
-  100%{transform:translateY(100%)}
-}
-
-.spacer{ height:80px; }
+.modal-close{position:absolute;top:10px;right:15px;font-size:28px;background:none;border:none;color:white;cursor:pointer;}
