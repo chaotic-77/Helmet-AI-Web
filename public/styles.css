@@ -1,276 +1,302 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial}
 
 .page-bg{
-min-height:100vh;
-background:linear-gradient(rgba(74,0,130,.75),rgba(74,0,130,.9)),url("./assets/ulacit-campus.jpg");
-background-size:cover;
-color:white;
+  min-height:100vh;
+  background:linear-gradient(rgba(74,0,130,.75),rgba(74,0,130,.9)),url("./assets/ulacit-campus.jpg");
+  background-size:cover;
+  background-position:center;
+  color:white;
 }
 
 .container{max-width:1100px;margin:auto;padding:0 20px}
 
 /* OCULTA INPUT FILE NATIVO */
 input[type="file"]{
-position:absolute;
-opacity:0;
-pointer-events:none;
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
 }
 
 /* NAVBAR */
 .navbar{
-position:sticky;top:0;z-index:50;
-background:rgba(0,0,0,.35);
-backdrop-filter:blur(8px);
-padding:14px 0;
-transition:all .3s ease;
+  position:sticky;top:0;z-index:50;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(8px);
+  padding:14px 0;
+  transition:background .25s ease, padding .25s ease;
+}
+.navbar.scrolled{
+  background:rgba(0,0,0,.7);
+  padding:10px 0;
 }
 
-.navbar.scrolled{background:rgba(0,0,0,.7)}
-
-/* ====== ESTADO INICIAL (SEPARADO) ====== */
+/* ====== ESTADO INICIAL (TOP) ====== */
 .nav-inner{
-display:flex;
-align-items:center;
-justify-content:space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
 }
 
 /* Marca izquierda */
 .brand{
-display:flex;
-align-items:center;
-gap:10px;
-text-decoration:none;
-color:white;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:white;
+  flex:0 0 auto;
 }
 
 .brand-logo{
-height:52px;
-transition:all .3s ease;
+  height:52px;
+  width:auto;
+  transition:opacity .25s ease, transform .25s ease;
 }
 
 /* Logos extremos (ocultos al inicio) */
-.corner-logo{
-text-decoration:none;
-}
+.corner-logo{ text-decoration:none; }
 .corner-logo img{
-width:44px;
-opacity:0;
-transition:all .3s ease;
+  width:44px;
+  height:auto;
+  opacity:0;
+  transition:opacity .25s ease, transform .25s ease, width .25s ease;
+  transform:translateY(-4px);
 }
 
-/* Centro NAV */
+/* Centro NAV (en TOP va a la derecha) */
 .nav-center{
-display:flex;
-align-items:center;
-justify-content:flex-end; /* en inicio queda hacia la derecha */
-gap:30px;
-flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:22px;
+  flex:1;
+  margin-left:auto;
 }
 
 .nav-links{
-display:flex;
-gap:22px;
-list-style:none;
-align-items:center;
+  display:flex;
+  gap:22px;
+  list-style:none;
+  align-items:center;
 }
 
 .nav-links button{
-background:none;
-border:none;
-color:white;
-font-weight:800;
-cursor:pointer;
-font-size:16px;
-transition:opacity .2s ease;
+  background:none;
+  border:none;
+  color:white;
+  font-weight:800;
+  cursor:pointer;
+  font-size:16px;
+  padding:10px 10px;
+  border-radius:12px;
+  transition:opacity .2s ease, background .2s ease;
+}
+.nav-links button:hover{
+  opacity:.9;
+  background:rgba(255,255,255,.08);
 }
 
-.nav-links button:hover{opacity:.8}
-
-/* ====== ESTADO SCROLL (LOGOS EXTREMOS + MENÚ CENTRADO) ====== */
-.navbar.scrolled .brand-logo{
-opacity:0;
-transform:translateY(-6px);
+/* ====== ESTADO SCROLL (CENTRO REAL) ======
+   -> Grid simétrico: extremos iguales para que el centro sea perfecto */
+.navbar.scrolled .nav-inner{
+  display:grid;
+  grid-template-columns: 84px 1fr 84px;
+  align-items:center;
 }
 
-/* aparecen logos extremos */
+/* extremos a lados */
+.navbar.scrolled .corner-logo--left{ justify-self:start; }
+.navbar.scrolled .corner-logo--right{ justify-self:end; }
+
+/* mostrar logos extremos */
 .navbar.scrolled .corner-logo img{
-opacity:1;
+  opacity:1;
+  transform:translateY(0);
+  width:48px;
 }
 
-/* el centro se centra real */
+/* ocultar logo grande del centro */
+.navbar.scrolled .brand-logo{
+  opacity:0;
+  transform:translateY(-6px) scale(.92);
+  pointer-events:none;
+}
+
+/* el centro ahora sí queda centrado */
 .navbar.scrolled .nav-center{
-justify-content:center;
+  justify-content:center;
+  justify-self:center;
+  margin-left:0;
 }
 
 /* HERO */
 .hero{padding:80px 0}
 
 .hero-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:40px;
-align-items:center;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
 }
 
 .pill{
-background:rgba(0,0,0,.3);
-padding:8px 12px;
-border-radius:999px;
-font-size:12px;
-margin-bottom:12px;
+  background:rgba(0,0,0,.3);
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:12px;
+  margin-bottom:12px;
 }
 
 /* FLOW (sin cuadro de "Flujo") */
 .hero-mini{
-background:rgba(0,0,0,.35);
-border-radius:16px;
-padding:26px;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
+  background:rgba(0,0,0,.35);
+  border-radius:16px;
+  padding:26px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 }
 
 /* “Flujo” SIN cápsula */
 .hero-mini__title{
-font-size:16px;
-font-weight:900;
-margin-bottom:14px;
-background:none;
-padding:0;
-border-radius:0;
+  font-size:16px;
+  font-weight:900;
+  margin-bottom:14px;
+  background:none;
+  padding:0;
+  border-radius:0;
 }
 
 /* pasos */
 .flow-steps{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
 }
 
 /* cajas consistentes */
 .flow-step{
-display:flex;
-align-items:center;
-justify-content:center;
-background:rgba(255,255,255,.10);
-padding:12px 20px;
-border-radius:14px;
-font-weight:900;
-font-size:15px;
-white-space:nowrap;
-min-width:140px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.10);
+  padding:12px 20px;
+  border-radius:14px;
+  font-weight:900;
+  font-size:15px;
+  white-space:nowrap;
+  min-width:140px;
 }
 
 .flow-arrow{
-font-size:16px;
-font-weight:900;
-opacity:.85;
-margin:0 2px;
+  font-size:16px;
+  font-weight:900;
+  opacity:.85;
+  margin:0 2px;
 }
 
 /* DEMO */
 .card{
-background:rgba(0,0,0,.35);
-padding:24px;
-border-radius:16px;
-margin-top:20px;
+  background:rgba(0,0,0,.35);
+  padding:24px;
+  border-radius:16px;
+  margin-top:20px;
 }
 
-/* TEXTO “Sube una imagen…” centrado SIEMPRE */
+/* TEXTO centrado SIEMPRE */
 .card-subtitle, .card p{
-text-align:center;
-margin-bottom:12px;
-font-weight:600;
+  text-align:center;
+  margin-bottom:12px;
+  font-weight:600;
 }
 
 .demo-row{
-display:flex;
-gap:12px;
-justify-content:center;
-align-items:center;
-margin-top:14px;
-flex-wrap:wrap;
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  align-items:center;
+  margin-top:14px;
+  flex-wrap:wrap;
 }
 
 .btn-primary{
-background:#ffc400;
-border:none;
-padding:10px 16px;
-border-radius:12px;
-font-weight:900;
-cursor:pointer;
+  background:#ffc400;
+  border:none;
+  padding:10px 16px;
+  border-radius:12px;
+  font-weight:900;
+  cursor:pointer;
 }
 
 .btn-secondary{
-background:rgba(255,255,255,.1);
-padding:10px 14px;
-border-radius:12px;
-border:1px solid rgba(255,255,255,.2);
-cursor:pointer;
-color:white;
+  background:rgba(255,255,255,.1);
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.2);
+  cursor:pointer;
+  color:white;
 }
 
 .result{
-margin-top:14px;
-font-size:18px;
-font-weight:900;
+  margin-top:14px;
+  font-size:18px;
+  font-weight:900;
 }
 
 .preview-stage{
-position:relative;
-margin-top:18px;
-border-radius:16px;
-overflow:hidden;
+  position:relative;
+  margin-top:18px;
+  border-radius:16px;
+  overflow:hidden;
 }
 
 #preview{
-display:none;
-width:100%;
+  display:none;
+  width:100%;
 }
 
 .preview-hint{
-text-align:center;
-padding:40px;
-font-weight:800;
+  text-align:center;
+  padding:40px;
+  font-weight:800;
 }
 
 /* MODALES */
 .modal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.85);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:100;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
 }
-
 .modal.active{display:flex}
 
 .modal-content{
-background:#111;
-padding:40px;
-border-radius:20px;
-max-width:600px;
-text-align:center;
-position:relative;
+  background:#111;
+  padding:40px;
+  border-radius:20px;
+  max-width:600px;
+  text-align:center;
+  position:relative;
 }
 
 .close{
-position:absolute;
-top:20px;
-right:20px;
-background:none;
-border:none;
-color:white;
-font-size:28px;
-cursor:pointer
+  position:absolute;
+  top:20px;
+  right:20px;
+  background:none;
+  border:none;
+  color:white;
+  font-size:28px;
+  cursor:pointer
 }
 
 .equipo-logo{
-height:60px;
-margin-bottom:20px;
+  height:60px;
+  margin-bottom:20px;
 }
-

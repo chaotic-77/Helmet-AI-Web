@@ -1,69 +1,90 @@
 (() => {
+  const input = document.getElementById("imageUpload");
+  const preview = document.getElementById("preview");
+  const sendBtn = document.getElementById("sendBtn");
+  const result = document.getElementById("result");
+  const previewHint = document.getElementById("previewHint");
+  const previewStage = document.getElementById("previewStage");
+  const topbar = document.getElementById("topbar");
 
-const input=document.getElementById("imageUpload");
-const preview=document.getElementById("preview");
-const sendBtn=document.getElementById("sendBtn");
-const result=document.getElementById("result");
-const previewHint=document.getElementById("previewHint");
-const previewStage=document.getElementById("previewStage");
-const topbar=document.getElementById("topbar");
+  const API_BASE = "https://helmet-ai-web-backend.onrender.com";
 
-const API_BASE="https://helmet-ai-web-backend.onrender.com";
+  /* NAVBAR SCROLL (con init) */
+  const onScroll = () => {
+    topbar.classList.toggle("scrolled", window.scrollY > 80);
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 
-/* NAVBAR SCROLL */
-window.addEventListener("scroll",()=>{
-topbar.classList.toggle("scrolled",window.scrollY>60);
-});
+  /* MODALES */
+  document.querySelectorAll("[data-modal]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const modal = document.getElementById(btn.dataset.modal);
+      if (modal) modal.classList.add("active");
+    });
+  });
 
-/* MODALES */
-document.querySelectorAll("[data-modal]").forEach(btn=>{
-btn.onclick=()=>document.getElementById(btn.dataset.modal).classList.add("active");
-});
+  document.querySelectorAll(".close").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const m = btn.closest(".modal");
+      if (m) m.classList.remove("active");
+    });
+  });
 
-document.querySelectorAll(".close").forEach(btn=>{
-btn.onclick=()=>btn.closest(".modal").classList.remove("active");
-});
+  window.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".modal").forEach(m => m.classList.remove("active"));
+    }
+  });
 
-window.addEventListener("keydown",e=>{
-if(e.key==="Escape")
-document.querySelectorAll(".modal").forEach(m=>m.classList.remove("active"));
-});
+  /* PREVIEW */
+  input?.addEventListener("change", () => {
+    const file = input.files?.[0];
+    if (!file) return;
 
-/* PREVIEW */
-input.addEventListener("change",()=>{
-const file=input.files?.[0];
-if(!file)return;
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+    if (previewHint) previewHint.style.display = "none";
+  });
 
-preview.src=URL.createObjectURL(file);
-preview.style.display="block";
-previewHint.style.display="none";
-});
+  /* DETECTOR */
+  sendBtn?.addEventListener("click", async () => {
+    const file = input.files?.[0];
+    if (!file) {
+      alert("Sube una imagen primero");
+      return;
+    }
 
-/* DETECTOR */
-sendBtn.onclick=async()=>{
-const file=input.files?.[0];
-if(!file){alert("Sube una imagen primero");return;}
+    sendBtn.disabled = true;
+    const oldText = sendBtn.textContent;
+    sendBtn.textContent = "Analizando...";
 
-sendBtn.disabled=true;
-sendBtn.textContent="Analizando...";
+    const formData = new FormData();
+    formData.append("image", file);
 
-const formData=new FormData();
-formData.append("image",file);
+    try {
+      const resp = await fetch(`${API_BASE}/predict`, {
+        method: "POST",
+        body: formData
+      });
 
-try{
-const resp=await fetch(`${API_BASE}/predict`,{method:"POST",body:formData});
-const data=await resp.json();
+      const contentType = resp.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        result.innerHTML = "🔴 Respuesta inválida del servicio";
+        return;
+      }
 
-result.innerHTML=data.detected
-? "🟢 Casco detectado"
-: "🔴 No se detectó casco";
+      const data = await resp.json();
 
-}catch{
-result.innerHTML="🔴 Error de conexión";
-}
+      result.innerHTML = data.detected
+        ? "🟢 Casco detectado"
+        : "🔴 No se detectó casco";
 
-sendBtn.disabled=false;
-sendBtn.textContent="Detectar cascos";
-};
-
+    } catch {
+      result.innerHTML = "🔴 Error de conexión";
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = oldText || "Detectar cascos";
+    }
+  });
 })();
