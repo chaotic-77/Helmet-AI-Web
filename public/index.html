@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Helmet AI – ULACIT</title>
-
-  <!-- CSS -->
+  <title>Helmet AI – Seguridad Inteligente</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
@@ -33,9 +31,11 @@
         <div>
           <h2>Sistema de Detección Inteligente de Cascos</h2>
           <p>Basado en visión por computadora (YOLO). Arquitectura web lista para producción académica.</p>
+
           <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
             Ver Demo
           </button>
+
           <div class="meta" style="margin-top:12px;">
             Proyecto académico • ULACIT • Frontend (Vercel) + Backend (Render)
           </div>
@@ -63,16 +63,31 @@
       <!-- DEMO -->
       <section id="demo" class="section">
         <h3>Prueba el modelo</h3>
+
         <div class="card">
           <p>Sube una imagen y el backend responderá si detecta casco.</p>
 
           <div class="demo-row" style="margin-top:12px;">
-            <input type="file" id="imageUpload" accept="image/*" />
-            <button id="sendBtn" class="btn-primary">Analizar Imagen</button>
+            <!-- Input real (oculto) -->
+            <input class="file-input" type="file" id="imageUpload" accept="image/*" />
+
+            <!-- Botón bonito para abrir el selector -->
+            <button id="pickBtn" class="btn-secondary" type="button">
+              Seleccionar imagen
+            </button>
+
+            <!-- Botón de enviar -->
+            <button id="sendBtn" class="btn-primary" type="button">
+              Analizar Imagen
+            </button>
           </div>
 
+          <!-- Nombre del archivo -->
+          <div id="fileName" class="file-name"></div>
+
           <div id="result"></div>
-          <img id="preview" />
+
+          <img id="preview" alt="" />
         </div>
       </section>
 
@@ -85,7 +100,6 @@
       <div class="spacer"></div>
     </div>
 
-    <!-- JS -->
     <script src="./main.js"></script>
   </div>
 </body>

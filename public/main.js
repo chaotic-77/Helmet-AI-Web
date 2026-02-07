@@ -4,15 +4,34 @@
   const sendBtn = document.getElementById("sendBtn");
   const result = document.getElementById("result");
 
+  // NUEVOS: selector bonito + nombre del archivo
+  const pickBtn = document.getElementById("pickBtn");
+  const fileName = document.getElementById("fileName");
+
   const API_BASE = "https://helmet-ai-web-backend.onrender.com";
 
   const setStatus = (html) => {
     result.innerHTML = html;
   };
 
+  // Botón "Seleccionar imagen" abre el input oculto
+  if (pickBtn) {
+    pickBtn.addEventListener("click", () => input.click());
+  }
+
   input.addEventListener("change", () => {
     const file = input.files?.[0];
-    if (!file) return;
+
+    if (!file) {
+      if (fileName) fileName.textContent = "";
+      preview.removeAttribute("src");
+      preview.removeAttribute("alt");
+      setStatus("");
+      return;
+    }
+
+    // Mostrar nombre del archivo debajo
+    if (fileName) fileName.textContent = `Archivo: ${file.name}`;
 
     // Preview local
     preview.src = URL.createObjectURL(file);
@@ -29,7 +48,6 @@
     // UI: bloquea botón mientras procesa
     sendBtn.disabled = true;
     sendBtn.textContent = "Analizando...";
-
     setStatus("Analizando imagen con IA...");
 
     const formData = new FormData();
@@ -67,7 +85,6 @@
       if (data.message) {
         result.innerHTML += `<br><small>${data.message}</small>`;
       }
-
     } catch (e) {
       console.error(e);
       setStatus("🔴 No se pudo conectar con el backend o hubo un error de respuesta.");
