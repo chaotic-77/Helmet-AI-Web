@@ -1,42 +1,29 @@
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial}
-
-.page-bg{
-  min-height:100vh;
-  background:linear-gradient(rgba(74,0,130,.75),rgba(74,0,130,.9)),url("./assets/ulacit-campus.jpg");
-  background-size:cover;
-  background-position:center;
-  color:white;
-}
-
-.container{max-width:1100px;margin:auto;padding:0 20px}
-
-/* OCULTA INPUT FILE NATIVO */
-input[type="file"]{
-  position:absolute;
-  opacity:0;
-  pointer-events:none;
-}
-
 /* NAVBAR */
 .navbar{
-  position:sticky;top:0;z-index:50;
+  position:sticky;
+  top:0;
+  z-index:50;
   background:rgba(0,0,0,.35);
   backdrop-filter:blur(8px);
   padding:14px 0;
-  transition:background .3s ease, padding .3s ease;
+  transition:background .25s ease, padding .25s ease;
 }
-
 .navbar.scrolled{
-  background:rgba(0,0,0,.7);
+  background:rgba(0,0,0,.70);
   padding:10px 0;
 }
 
-/* ====== ESTADO INICIAL (SIN SCROLL): IZQUIERDA + DERECHA ====== */
+/* ===== Estado inicial (SIN scroll): marca izquierda, menú derecha ===== */
 .nav-inner{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:16px;
+}
+
+/* Logos laterales NO se ven al inicio */
+.corner-logo{
+  display:none;
 }
 
 /* Marca izquierda */
@@ -45,29 +32,21 @@ input[type="file"]{
   align-items:center;
   gap:10px;
   text-decoration:none;
-  color:white;
+  color:#fff;
 }
-
 .brand-logo{
   height:52px;
-  transition:opacity .3s ease, transform .3s ease, height .3s ease;
+  width:auto;
+  display:block;
+  transition:opacity .25s ease, transform .25s ease;
 }
 
-/* Logos extremos (ocultos al inicio) */
-.corner-logo{ text-decoration:none; }
-.corner-logo img{
-  width:44px;
-  opacity:0;
-  transition:opacity .3s ease, transform .3s ease, width .3s ease;
-  transform:translateY(-4px);
-}
-
-/* Centro NAV (en inicio va a la derecha) */
+/* Centro (menú) a la derecha en inicio */
 .nav-center{
   display:flex;
   align-items:center;
   justify-content:flex-end;
-  gap:30px;
+  gap:28px;
   flex:1;
 }
 
@@ -77,221 +56,61 @@ input[type="file"]{
   list-style:none;
   align-items:center;
 }
-
 .nav-links button{
   background:none;
   border:none;
-  color:white;
+  color:#fff;
   font-weight:800;
   cursor:pointer;
   font-size:16px;
   transition:opacity .2s ease;
 }
-
 .nav-links button:hover{opacity:.85}
 
-/* ====== ESTADO SCROLL: GRID para centrar PERFECTO ====== */
+/* ===== Estado scroll: extremos + centro PERFECTO ===== */
 .navbar.scrolled .nav-inner{
   display:grid;
-  grid-template-columns: 1fr auto 1fr; /* extremos iguales -> centro real */
+  grid-template-columns: 70px 1fr 70px; /* extremos fijos */
   align-items:center;
 }
 
-/* el bloque central queda perfectamente centrado */
-.navbar.scrolled .nav-center{
+/* aparecen los 2 logos en extremos */
+.navbar.scrolled .corner-logo{
+  display:flex;
+  align-items:center;
   justify-content:center;
-  justify-self:center;
-  flex:unset;
+  text-decoration:none;
+}
+.navbar.scrolled .corner-logo--left{justify-self:start;}
+.navbar.scrolled .corner-logo--right{justify-self:end;}
+
+.navbar.scrolled .corner-logo img{
+  width:44px;
+  height:auto;
+  display:block;
 }
 
-/* ocultar logo central en scroll */
+/* se oculta SOLO el logo central de la marca, pero queda "Helmet AI" */
 .navbar.scrolled .brand-logo{
   opacity:0;
-  transform:translateY(-6px) scale(.9);
+  transform:translateY(-6px);
   pointer-events:none;
 }
 
-/* mostrar logos extremos en scroll */
-.navbar.scrolled .corner-logo img{
-  opacity:1;
-  transform:translateY(0);
-  width:50px;
-  pointer-events:auto;
-}
-
-/* empujar logos a extremos */
-.navbar.scrolled .corner-logo--left{ justify-self:start; padding-left:10px; }
-.navbar.scrolled .corner-logo--right{ justify-self:end; padding-right:10px; }
-
-/* HERO */
-.hero{padding:80px 0}
-
-.hero-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:40px;
-  align-items:center;
-}
-
-.pill{
-  background:rgba(0,0,0,.3);
-  padding:8px 12px;
-  border-radius:999px;
-  font-size:12px;
-  margin-bottom:12px;
-}
-
-/* FLOW (sin cuadro de "Flujo") */
-.hero-mini{
-  background:rgba(0,0,0,.35);
-  border-radius:16px;
-  padding:26px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+/* centro real: brand+links centrados */
+.navbar.scrolled .nav-center{
   justify-content:center;
+  justify-self:center;
+  gap:26px;
+  flex:unset;
 }
 
-/* “Flujo” SIN cápsula */
-.hero-mini__title{
-  font-size:16px;
+/* título siempre visible */
+.title{
+  color:#fff;
   font-weight:900;
-  margin-bottom:14px;
-  background:none;
-  padding:0;
-  border-radius:0;
+  text-decoration:none;
 }
 
-/* pasos */
-.flow-steps{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-}
-
-/* cajas consistentes */
-.flow-step{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(255,255,255,.10);
-  padding:12px 20px;
-  border-radius:14px;
-  font-weight:900;
-  font-size:15px;
-  white-space:nowrap;
-  min-width:140px;
-}
-
-.flow-arrow{
-  font-size:16px;
-  font-weight:900;
-  opacity:.85;
-  margin:0 2px;
-}
-
-/* DEMO */
-.card{
-  background:rgba(0,0,0,.35);
-  padding:24px;
-  border-radius:16px;
-  margin-top:20px;
-}
-
-/* TEXTO “Sube una imagen…” centrado SIEMPRE */
-.card-subtitle{
-  text-align:center;
-  margin-bottom:12px;
-  font-weight:600;
-  width:100%;
-}
-
-.demo-row{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  align-items:center;
-  margin-top:14px;
-  flex-wrap:wrap;
-}
-
-.btn-primary{
-  background:#ffc400;
-  border:none;
-  padding:10px 16px;
-  border-radius:12px;
-  font-weight:900;
-  cursor:pointer;
-}
-
-.btn-secondary{
-  background:rgba(255,255,255,.1);
-  padding:10px 14px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.2);
-  cursor:pointer;
-  color:white;
-}
-
-.result{
-  margin-top:14px;
-  font-size:18px;
-  font-weight:900;
-}
-
-.preview-stage{
-  position:relative;
-  margin-top:18px;
-  border-radius:16px;
-  overflow:hidden;
-}
-
-#preview{
-  display:none;
-  width:100%;
-}
-
-.preview-hint{
-  text-align:center;
-  padding:40px;
-  font-weight:800;
-}
-
-/* MODALES */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.85);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
-}
-
-.modal.active{display:flex}
-
-.modal-content{
-  background:#111;
-  padding:40px;
-  border-radius:20px;
-  max-width:600px;
-  text-align:center;
-  position:relative;
-}
-
-.close{
-  position:absolute;
-  top:20px;
-  right:20px;
-  background:none;
-  border:none;
-  color:white;
-  font-size:28px;
-  cursor:pointer
-}
-
-.equipo-logo{
-  height:60px;
-  margin-bottom:20px;
-}
+/* (Opcional) separa un toque el título del menú */
+.navbar.scrolled .brand{gap:8px;}
