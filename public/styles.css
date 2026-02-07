@@ -27,17 +27,20 @@ transition:all .3s ease;
 
 .navbar.scrolled{background:rgba(0,0,0,.7)}
 
-/* NAVBAR ESTADO INICIAL (SEPARADO) */
+/* ====== ESTADO INICIAL (SEPARADO) ====== */
 .nav-inner{
 display:flex;
 align-items:center;
 justify-content:space-between;
 }
 
+/* Marca izquierda */
 .brand{
 display:flex;
 align-items:center;
 gap:10px;
+text-decoration:none;
+color:white;
 }
 
 .brand-logo{
@@ -45,40 +48,30 @@ height:52px;
 transition:all .3s ease;
 }
 
-/* LOGOS LATERALES */
+/* Logos extremos (ocultos al inicio) */
+.corner-logo{
+text-decoration:none;
+}
 .corner-logo img{
 width:44px;
 opacity:0;
 transition:all .3s ease;
 }
 
-/* SCROLL NAVBAR */
-.navbar.scrolled .nav-inner{
-justify-content:center;
-gap:70px;
-}
-
-.navbar.scrolled .brand-logo{
-opacity:0;
-transform:scale(.8);
-}
-
-.navbar.scrolled .corner-logo img{
-opacity:1;
-}
-
-/* CENTRO NAV */
+/* Centro NAV */
 .nav-center{
 display:flex;
 align-items:center;
-justify-content:center;
+justify-content:flex-end; /* en inicio queda hacia la derecha */
 gap:30px;
+flex:1;
 }
 
 .nav-links{
 display:flex;
 gap:22px;
 list-style:none;
+align-items:center;
 }
 
 .nav-links button{
@@ -91,8 +84,22 @@ font-size:16px;
 transition:opacity .2s ease;
 }
 
-.nav-links button:hover{
-opacity:.8;
+.nav-links button:hover{opacity:.8}
+
+/* ====== ESTADO SCROLL (LOGOS EXTREMOS + MENÚ CENTRADO) ====== */
+.navbar.scrolled .brand-logo{
+opacity:0;
+transform:translateY(-6px);
+}
+
+/* aparecen logos extremos */
+.navbar.scrolled .corner-logo img{
+opacity:1;
+}
+
+/* el centro se centra real */
+.navbar.scrolled .nav-center{
+justify-content:center;
 }
 
 /* HERO */
@@ -113,7 +120,7 @@ font-size:12px;
 margin-bottom:12px;
 }
 
-/* FLOW PERFECTAMENTE CENTRADO */
+/* FLOW (sin cuadro de "Flujo") */
 .hero-mini{
 background:rgba(0,0,0,.35);
 border-radius:16px;
@@ -124,15 +131,17 @@ align-items:center;
 justify-content:center;
 }
 
+/* “Flujo” SIN cápsula */
 .hero-mini__title{
-font-size:15px;
+font-size:16px;
 font-weight:900;
-margin-bottom:16px;
-background:rgba(255,255,255,.10);
-padding:8px 18px;
-border-radius:14px;
+margin-bottom:14px;
+background:none;
+padding:0;
+border-radius:0;
 }
 
+/* pasos */
 .flow-steps{
 display:flex;
 align-items:center;
@@ -140,13 +149,18 @@ justify-content:center;
 gap:12px;
 }
 
+/* cajas consistentes */
 .flow-step{
+display:flex;
+align-items:center;
+justify-content:center;
 background:rgba(255,255,255,.10);
-padding:10px 18px;
+padding:12px 20px;
 border-radius:14px;
 font-weight:900;
 font-size:15px;
 white-space:nowrap;
+min-width:140px;
 }
 
 .flow-arrow{
@@ -164,11 +178,20 @@ border-radius:16px;
 margin-top:20px;
 }
 
+/* TEXTO “Sube una imagen…” centrado SIEMPRE */
+.card-subtitle, .card p{
+text-align:center;
+margin-bottom:12px;
+font-weight:600;
+}
+
 .demo-row{
 display:flex;
 gap:12px;
 justify-content:center;
+align-items:center;
 margin-top:14px;
+flex-wrap:wrap;
 }
 
 .btn-primary{
@@ -186,6 +209,7 @@ padding:10px 14px;
 border-radius:12px;
 border:1px solid rgba(255,255,255,.2);
 cursor:pointer;
+color:white;
 }
 
 .result{
@@ -242,7 +266,7 @@ background:none;
 border:none;
 color:white;
 font-size:28px;
-cursor:pointer;
+cursor:pointer
 }
 
 .equipo-logo{
