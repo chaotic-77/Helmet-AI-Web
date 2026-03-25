@@ -1,6 +1,7 @@
 import os
 import uuid
 import pathlib
+import requests
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -21,6 +22,10 @@ UPLOAD_DIR = os.path.join("/tmp", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "*")
+
+ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API_KEY")
+ROBOFLOW_MODEL_ID = os.getenv("ROBOFLOW_MODEL_ID")
+TARGET_CLASS = os.getenv("TARGET_CLASS", "helmet").lower()
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -48,13 +53,16 @@ elif YOLO is None:
 else:
     model_error = f"Modelo no encontrado en {MODEL_PATH}"
 
+roboflow_ready = bool(ROBOFLOW_API_KEY and ROBOFLOW_MODEL_ID)
+
 @app.get("/")
 def home():
     return jsonify({
         "message": "Helmet AI backend running",
         "health": "/health",
         "predict": "/predict",
-        "model_ready": model_ready
+        "model_ready": model_ready,
+        "roboflow_ready": roboflow_ready
     }), 200
 
 @app.get("/health")
@@ -62,6 +70,7 @@ def health():
     return jsonify({
         "status": "ok",
         "model_ready": model_ready,
+        "roboflow_ready": roboflow_ready,
         "model_error": model_error if not model_ready else None
     }), 200
 
@@ -84,7 +93,7 @@ def predict():
     file.save(temp_path)
 
     try:
-        # --- YOLO real ---
+        # --- YOLO local ---
         if model_ready and model is not None:
             results = model(temp_path)
             r = results[0]
@@ -104,24 +113,80 @@ def predict():
                         "xyxy": [x1, y1, x2, y2],
                     })
 
-            TARGET_CLASS = os.getenv("TARGET_CLASS", "helmet").lower()
             detected = any(d["class_name"].lower() == TARGET_CLASS for d in detections)
 
             return jsonify({
                 "ok": True,
                 "mode": "yolo",
                 "model_ready": True,
+                "roboflow_ready": roboflow_ready,
                 "detected": detected,
                 "detections": detections
             }), 200
 
-        # --- DEMO estable (sin modelo) ---
+        # --- Roboflow Hosted API ---
+        if roboflow_ready:
+            with open(temp_path, "rb") as img_file:
+                response = requests.post(
+                    f"https://serverless.roboflow.com/{ROBOFLOW_MODEL_ID}",
+                    params={"api_key": ROBOFLOW_API_KEY},
+                    files={"file": img_file},
+                    timeout=60
+                )
+
+            if response.status_code != 200:
+                return jsonify({
+                    "ok": False,
+                    "mode": "roboflow",
+                    "error": "Roboflow respondió con error",
+                    "status_code": response.status_code,
+                    "details": response.text
+                }), 502
+
+            data = response.json()
+            predictions = data.get("predictions", [])
+
+            detections = []
+            for p in predictions:
+                class_name = str(p.get("class", ""))
+                confidence = float(p.get("confidence", 0))
+
+                x = float(p.get("x", 0))
+                y = float(p.get("y", 0))
+                w = float(p.get("width", 0))
+                h = float(p.get("height", 0))
+
+                x1 = x - (w / 2)
+                y1 = y - (h / 2)
+                x2 = x + (w / 2)
+                y2 = y + (h / 2)
+
+                detections.append({
+                    "class_name": class_name,
+                    "confidence": confidence,
+                    "xyxy": [x1, y1, x2, y2]
+                })
+
+            detected = any(d["class_name"].lower() == TARGET_CLASS for d in detections)
+
+            return jsonify({
+                "ok": True,
+                "mode": "roboflow",
+                "model_ready": False,
+                "roboflow_ready": True,
+                "detected": detected,
+                "detections": detections,
+                "raw": data
+            }), 200
+
+        # --- Demo ---
         return jsonify({
             "ok": True,
             "mode": "demo",
             "model_ready": False,
+            "roboflow_ready": False,
             "detected": False,
-            "message": "DEMO: modelo aún no cargado. En cuanto subamos best.pt, se activa YOLO real."
+            "message": "DEMO: no hay best.pt local ni variables de Roboflow configuradas."
         }), 200
 
     finally:
