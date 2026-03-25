@@ -74,11 +74,16 @@
         return;
       }
 
-      const data = await resp.json();
+     const data = await resp.json();
+console.log("Respuesta /predict:", data);
 
-      result.innerHTML = data.detected
-        ? "🟢 Casco detectado"
-        : "🔴 No se detectó casco";
+if (data.detections && data.detections.length > 0) {
+  console.log("Detecciones:", data.detections);
+}
+
+result.innerHTML = data.detected
+  ? `🟢 Casco detectado (${data.mode || "sin mode"})`
+  : `🔴 No se detectó casco (${data.mode || "sin mode"})`;
 
     } catch {
       result.innerHTML = "🔴 Error de conexión";
