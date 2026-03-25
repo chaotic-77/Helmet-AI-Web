@@ -13,7 +13,7 @@ except Exception:
     YOLO = None
 
 MAX_FILE_SIZE_MB = 8
-ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".webp"}
+ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".webp", ".jfif"}
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "model", "best.pt")
@@ -35,8 +35,25 @@ if FRONTEND_ORIGIN == "*":
 else:
     CORS(app, resources={r"/*": {"origins": [FRONTEND_ORIGIN]}})
 
-def is_allowed(filename: str) -> bool:
-    return pathlib.Path(filename.lower()).suffix in ALLOWED_EXT
+
+def is_allowed(filename: str, mimetype: str | None = None) -> bool:
+    ext = pathlib.Path(filename).suffix.lower()
+    if ext in ALLOWED_EXT:
+        return True
+
+    if mimetype:
+        allowed_mimes = {
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/pjpeg",
+        }
+        if mimetype.lower() in allowed_mimes:
+            return True
+
+    return False
+
 
 model = None
 model_ready = False
@@ -55,6 +72,7 @@ else:
 
 roboflow_ready = bool(ROBOFLOW_API_KEY and ROBOFLOW_MODEL_ID)
 
+
 @app.get("/")
 def home():
     return jsonify({
@@ -65,6 +83,7 @@ def home():
         "roboflow_ready": roboflow_ready
     }), 200
 
+
 @app.get("/health")
 def health():
     return jsonify({
@@ -73,6 +92,7 @@ def health():
         "roboflow_ready": roboflow_ready,
         "model_error": model_error if not model_ready else None
     }), 200
+
 
 @app.post("/predict")
 def predict():
@@ -83,11 +103,30 @@ def predict():
     if not file.filename:
         return jsonify({"error": "Nombre de archivo vacío."}), 400
 
-    filename = secure_filename(file.filename)
-    if not is_allowed(filename):
-        return jsonify({"error": "Formato no permitido. Usa jpg/jpeg/png/webp."}), 415
+    original_name = file.filename
+    filename = secure_filename(original_name)
+
+    if not filename:
+        filename = f"upload_{uuid.uuid4().hex}.jpg"
+
+    if not is_allowed(original_name, getattr(file, "mimetype", None)):
+        return jsonify({
+            "error": "Formato no permitido. Usa jpg/jpeg/png/webp/jfif.",
+            "filename": original_name,
+            "mimetype": getattr(file, "mimetype", None)
+        }), 415
 
     ext = pathlib.Path(filename).suffix.lower()
+    if not ext:
+        guessed_ext = {
+            "image/jpeg": ".jpg",
+            "image/jpg": ".jpg",
+            "image/pjpeg": ".jpg",
+            "image/png": ".png",
+            "image/webp": ".webp",
+        }.get(getattr(file, "mimetype", "").lower(), ".jpg")
+        ext = guessed_ext
+
     temp_name = f"{uuid.uuid4().hex}{ext}"
     temp_path = os.path.join(UPLOAD_DIR, temp_name)
     file.save(temp_path)
@@ -194,6 +233,7 @@ def predict():
             os.remove(temp_path)
         except Exception:
             pass
+
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
