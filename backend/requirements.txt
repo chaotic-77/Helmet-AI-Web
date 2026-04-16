@@ -4,3 +4,5 @@ gunicorn==22.0.0
 python-dotenv==1.0.1
 inference-sdk==0.9.17
 requests==2.32.3
+pillow==11.1.0
+ultralytics==8.3.56
