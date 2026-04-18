@@ -5,6 +5,8 @@
   const result = document.getElementById("result");
   const previewHint = document.getElementById("previewHint");
   const topbar = document.getElementById("topbar");
+  const canvas = document.getElementById("overlay");
+  const ctx = canvas?.getContext("2d");
 
   const API_BASE = "https://helmet-ai-web-backend.onrender.com";
   const HARDHAT_THRESHOLD = 0.85;
@@ -61,21 +63,21 @@
   async function convertImageToJpeg(file, quality = 0.92) {
     const img = await loadImageFromFile(file);
 
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth || img.width;
-    canvas.height = img.naturalHeight || img.height;
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = img.naturalWidth || img.width;
+    tempCanvas.height = img.naturalHeight || img.height;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
+    const tempCtx = tempCanvas.getContext("2d");
+    if (!tempCtx) {
       throw new Error("No se pudo inicializar canvas.");
     }
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
+    tempCtx.fillStyle = "#ffffff";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.drawImage(img, 0, 0);
 
     const blob = await new Promise((resolve) => {
-      canvas.toBlob(resolve, "image/jpeg", quality);
+      tempCanvas.toBlob(resolve, "image/jpeg", quality);
     });
 
     if (!blob) {
@@ -120,15 +122,88 @@
     });
   }
 
+  function clearBoxes() {
+    if (!canvas || !ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function syncCanvasToImage() {
+    if (!canvas || !preview) return;
+    canvas.width = preview.clientWidth || preview.width || 0;
+    canvas.height = preview.clientHeight || preview.height || 0;
+    canvas.style.position = "absolute";
+    canvas.style.top = "0";
+    canvas.style.left = "0";
+    canvas.style.width = `${preview.clientWidth}px`;
+    canvas.style.height = `${preview.clientHeight}px`;
+  }
+
+  function drawBoxes(detections) {
+    if (!canvas || !ctx || !preview) return;
+    if (!preview.naturalWidth || !preview.naturalHeight) return;
+
+    syncCanvasToImage();
+    clearBoxes();
+
+    const scaleX = preview.clientWidth / preview.naturalWidth;
+    const scaleY = preview.clientHeight / preview.naturalHeight;
+
+    detections.forEach((d) => {
+      const x = Number(d.x ?? 0);
+      const y = Number(d.y ?? 0);
+      const w = Number(d.width ?? 0);
+      const h = Number(d.height ?? 0);
+
+      if (!w || !h) return;
+
+      const x1 = (x - w / 2) * scaleX;
+      const y1 = (y - h / 2) * scaleY;
+      const boxW = w * scaleX;
+      const boxH = h * scaleY;
+
+      const label = (d.class_name || d.class || "objeto").toLowerCase();
+      const confidence = Number(d.confidence ?? 0);
+      const color = label === "hardhat" ? "#7c3aed" : "#ef4444";
+      const text = `${label} ${(confidence * 100).toFixed(1)}%`;
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x1, y1, boxW, boxH);
+
+      ctx.font = "bold 14px Arial, sans-serif";
+      const textWidth = ctx.measureText(text).width;
+      const textHeight = 22;
+      const textX = x1;
+      const textY = Math.max(0, y1 - textHeight);
+
+      ctx.fillStyle = color;
+      ctx.fillRect(textX, textY, textWidth + 12, textHeight);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(text, textX + 6, textY + 15);
+    });
+  }
+
   input?.addEventListener("change", async () => {
     const file = input.files?.[0];
     if (!file) return;
 
-    preview.src = URL.createObjectURL(file);
+    const objectUrl = URL.createObjectURL(file);
+    preview.onload = () => {
+      syncCanvasToImage();
+      clearBoxes();
+    };
+
+    preview.src = objectUrl;
     preview.style.display = "block";
 
     if (previewHint) previewHint.style.display = "none";
     result.innerHTML = "";
+    clearBoxes();
+  });
+
+  window.addEventListener("resize", () => {
+    syncCanvasToImage();
   });
 
   sendBtn?.addEventListener("click", async () => {
@@ -163,6 +238,7 @@
         data = JSON.parse(rawText);
       } catch {
         result.innerHTML = `🔴 Respuesta no JSON (${resp.status})`;
+        clearBoxes();
         return;
       }
 
@@ -184,6 +260,7 @@
           `Error ${resp.status}`;
 
         result.innerHTML = `🔴 ${msg}`;
+        clearBoxes();
         return;
       }
 
@@ -192,6 +269,15 @@
       const acceptedHardhats = getAcceptedHardhats(data);
       const acceptedCount = acceptedHardhats.length;
       const finalDetected = acceptedCount > 0;
+
+      const allDetections =
+        Array.isArray(data.all_detections) && data.all_detections.length > 0
+          ? data.all_detections
+          : Array.isArray(data.detections)
+            ? data.detections
+            : [];
+
+      drawBoxes(allDetections);
 
       if (finalDetected) {
         result.innerHTML = `
@@ -209,6 +295,7 @@
     } catch (error) {
       console.error("Error:", error);
       result.innerHTML = "🔴 No se pudo procesar la imagen";
+      clearBoxes();
     } finally {
       sendBtn.disabled = false;
       sendBtn.textContent = oldText || "Detectar cascos";

@@ -80,11 +80,16 @@
 <div id="result" class="result"></div>
 
 <div class="preview-wrap">
-<div class="preview-stage" id="previewStage">
-<div class="scanline"></div>
-<img id="preview">
-<div class="preview-hint" id="previewHint">Tu imagen aparecerá aquí</div>
-</div>
+  <div class="preview-stage" id="previewStage">
+    <div class="scanline"></div>
+
+    <div class="image-canvas-wrap" id="imageCanvasWrap">
+      <img id="preview" alt="Vista previa">
+      <canvas id="overlay"></canvas>
+    </div>
+
+    <div class="preview-hint" id="previewHint">Tu imagen aparecerá aquí</div>
+  </div>
 </div>
 
 </div>

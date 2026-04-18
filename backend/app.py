@@ -2,7 +2,6 @@ import io
 import os
 import uuid
 import pathlib
-import tempfile
 import requests
 
 from flask import Flask, request, jsonify
@@ -51,14 +50,12 @@ FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "*")
 ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API_KEY")
 ROBOFLOW_MODEL_ID = os.getenv("ROBOFLOW_MODEL_ID")
 
-# Clase objetivo correcta
 TARGET_CLASSES = {
     c.strip().lower()
     for c in os.getenv("TARGET_CLASS", "hardhat").split(",")
     if c.strip()
 }
 
-# Umbral configurable; por defecto 0.85
 MIN_HARDHAT_CONFIDENCE = float(os.getenv("MIN_HARDHAT_CONFIDENCE", "0.85"))
 
 app = Flask(__name__)
@@ -89,7 +86,6 @@ def save_uploaded_image_as_jpg(file_storage) -> tuple[str, str]:
     original_name = file_storage.filename or "upload"
     original_name = secure_filename(original_name) or f"upload_{uuid.uuid4().hex}"
 
-    # Leemos bytes una sola vez
     raw_bytes = file_storage.read()
     if not raw_bytes:
         raise ValueError("El archivo está vacío.")
@@ -97,22 +93,18 @@ def save_uploaded_image_as_jpg(file_storage) -> tuple[str, str]:
     temp_name = f"{uuid.uuid4().hex}.jpg"
     temp_path = os.path.join(UPLOAD_DIR, temp_name)
 
-    # Intentar convertir con Pillow
     if Image is None:
         raise RuntimeError("Pillow no está instalado. Instálalo con: pip install pillow")
 
     try:
         img = Image.open(io.BytesIO(raw_bytes))
 
-        # Corrige orientación EXIF si existe
         if ImageOps is not None:
             img = ImageOps.exif_transpose(img)
 
-        # Convierte transparencias o modos extraños a RGB
         if img.mode not in ("RGB",):
             img = img.convert("RGB")
 
-        # Guardar como JPG estandarizado
         img.save(temp_path, format="JPEG", quality=95)
         return temp_path, original_name
 
@@ -130,14 +122,24 @@ def normalize_yolo_detections(result) -> list[dict]:
     for b in result.boxes:
         cls_id = int(b.cls[0])
         conf = float(b.conf[0])
+
         x1, y1, x2, y2 = [float(v) for v in b.xyxy[0]]
+        x = float((x1 + x2) / 2.0)
+        y = float((y1 + y2) / 2.0)
+        width = float(x2 - x1)
+        height = float(y2 - y1)
 
         class_name = str(names.get(cls_id, str(cls_id))).lower().strip()
 
         detections.append({
             "class_id": cls_id,
+            "class": class_name,
             "class_name": class_name,
             "confidence": conf,
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height,
             "xyxy": [x1, y1, x2, y2],
         })
 
@@ -153,17 +155,22 @@ def normalize_roboflow_detections(predictions: list[dict]) -> list[dict]:
 
         x = float(p.get("x", 0))
         y = float(p.get("y", 0))
-        w = float(p.get("width", 0))
-        h = float(p.get("height", 0))
+        width = float(p.get("width", 0))
+        height = float(p.get("height", 0))
 
-        x1 = x - (w / 2)
-        y1 = y - (h / 2)
-        x2 = x + (w / 2)
-        y2 = y + (h / 2)
+        x1 = x - (width / 2)
+        y1 = y - (height / 2)
+        x2 = x + (width / 2)
+        y2 = y + (height / 2)
 
         detections.append({
+            "class": class_name,
             "class_name": class_name,
             "confidence": confidence,
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height,
             "xyxy": [x1, y1, x2, y2]
         })
 
@@ -243,7 +250,6 @@ def predict():
     temp_path = None
 
     try:
-        # Convertir SIEMPRE a JPG antes de inferencia
         temp_path, safe_original_name = save_uploaded_image_as_jpg(file)
 
         # --- YOLO local ---
@@ -322,6 +328,8 @@ def predict():
             "min_hardhat_confidence": MIN_HARDHAT_CONFIDENCE,
             "detected": False,
             "helmet_count": 0,
+            "detections": [],
+            "all_detections": [],
             "message": "DEMO: no hay best.pt local ni variables de Roboflow configuradas."
         }), 200
 
