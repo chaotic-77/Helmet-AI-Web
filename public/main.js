@@ -106,12 +106,14 @@
     }
 
     return debugSource
-      .map((d) => {
-        const cls = d.class_name || d.class || "sin_clase";
-        const conf = Number(d.confidence ?? 0).toFixed(2);
-        return `${cls} (${conf})`;
-      })
-      .join(" | ");
+  .map((d) => {
+    let cls = (d.class_name || d.class || "sin_clase").toLowerCase();
+    if (cls === "head") cls = "no_hardhat";
+
+    const conf = Number(d.confidence ?? 0).toFixed(2);
+    return `${cls} (${conf})`;
+  })
+  .join(" | ");
   }
 
   function getAcceptedHardhats(data) {
@@ -161,10 +163,12 @@
       const boxW = w * scaleX;
       const boxH = h * scaleY;
 
-      const label = (d.class_name || d.class || "objeto").toLowerCase();
-      const confidence = Number(d.confidence ?? 0);
-      const color = label === "hardhat" ? "#7c3aed" : "#ef4444";
-      const text = `${label} ${(confidence * 100).toFixed(1)}%`;
+    let label = (d.class_name || d.class || "objeto").toLowerCase();
+if (label === "head") label = "no_hardhat";
+
+const confidence = Number(d.confidence ?? 0);
+const color = label === "hardhat" ? "#7c3aed" : "#ef4444";
+const text = `${label} ${(confidence * 100).toFixed(1)}%`;
 
       ctx.strokeStyle = color;
       ctx.lineWidth = 3;
