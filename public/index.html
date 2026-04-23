@@ -99,11 +99,28 @@
 
 <!-- MODAL PROYECTO -->
 <div class="modal" id="modalProyecto">
-<div class="modal-content">
-<button class="close">&times;</button>
-<h2>Proyecto</h2>
-<p>Sistema académico basado en visión por computadora para detectar el uso correcto de cascos de seguridad utilizando modelos tipo YOLO y despliegue web.</p>
-</div>
+  <div class="modal-content modal-slider">
+    <button class="close">&times;</button>
+    <h2>Proyecto</h2>
+
+    <div class="slider-container">
+      <button class="slider-btn prev" onclick="changeProjectSlide(-1)">❮</button>
+
+      <div class="slider-frame">
+        <img class="project-slide active" src="./assets/slide1.png" alt="Diapositiva 1 Helmet-AI">
+        <img class="project-slide" src="./assets/slide2.png" alt="Diapositiva 2 Helmet-AI">
+        <img class="project-slide" src="./assets/slide3.png" alt="Diapositiva 3 Helmet-AI">
+      </div>
+
+      <button class="slider-btn next" onclick="changeProjectSlide(1)">❯</button>
+    </div>
+
+    <div class="slider-dots">
+      <span class="slider-dot active" onclick="goToProjectSlide(0)"></span>
+      <span class="slider-dot" onclick="goToProjectSlide(1)"></span>
+      <span class="slider-dot" onclick="goToProjectSlide(2)"></span>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL MANUAL -->

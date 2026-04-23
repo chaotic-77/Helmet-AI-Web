@@ -305,4 +305,45 @@ const text = `${label} ${(confidence * 100).toFixed(1)}%`;
       sendBtn.textContent = oldText || "Detectar cascos";
     }
   });
+
+// =======================
+// SLIDER PROYECTO (MODAL)
+// =======================
+
+let currentProjectSlide = 0;
+
+const projectSlides = document.querySelectorAll(".project-slide");
+const projectDots = document.querySelectorAll(".slider-dot");
+
+function updateProjectSlides(index) {
+  if (!projectSlides.length) return;
+
+  if (index < 0) index = projectSlides.length - 1;
+  if (index >= projectSlides.length) index = 0;
+
+  projectSlides.forEach((slide) => slide.classList.remove("active"));
+  projectDots.forEach((dot) => dot.classList.remove("active"));
+
+  projectSlides[index].classList.add("active");
+  if (projectDots[index]) projectDots[index].classList.add("active");
+
+  currentProjectSlide = index;
+}
+
+// Botones flechas
+window.changeProjectSlide = function (direction) {
+  updateProjectSlides(currentProjectSlide + direction);
+};
+
+// Dots
+window.goToProjectSlide = function (index) {
+  updateProjectSlides(index);
+};
+
+// Reiniciar cuando se abre el modal
+document.querySelectorAll('[data-modal="modalProyecto"]').forEach((btn) => {
+  btn.addEventListener("click", () => {
+    setTimeout(() => updateProjectSlides(0), 100);
+  });
+});
 })();
