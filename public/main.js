@@ -31,7 +31,6 @@
     });
   });
 
-  // Cerrar con ESC
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       document.querySelectorAll(".modal").forEach((m) => m.classList.remove("active"));
@@ -86,24 +85,6 @@
     });
   }
 
-  function buildDebugInfo(data) {
-    const debugSource =
-      Array.isArray(data.all_detections) && data.all_detections.length > 0
-        ? data.all_detections
-        : Array.isArray(data.detections)
-        ? data.detections
-        : [];
-
-    if (debugSource.length === 0) return "sin detecciones";
-
-    return debugSource.map((d) => {
-      let cls = (d.class_name || d.class || "sin_clase").toLowerCase();
-      if (cls === "head") cls = "no_hardhat";
-      const conf = Number(d.confidence ?? 0).toFixed(2);
-      return `${cls} (${conf})`;
-    }).join(" | ");
-  }
-
   function getAcceptedHardhats(data) {
     return (Array.isArray(data.detections) ? data.detections : []).filter((d) => {
       const cls = (d.class_name || d.class || "").toLowerCase();
@@ -113,17 +94,18 @@
   }
 
   function clearBoxes() {
-    ctx?.clearRect(0, 0, canvas.width, canvas.height);
+    if (!ctx || !canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   function syncCanvasToImage() {
     if (!canvas || !preview) return;
-    canvas.width = preview.clientWidth;
-    canvas.height = preview.clientHeight;
+    canvas.width = preview.clientWidth || 0;
+    canvas.height = preview.clientHeight || 0;
   }
 
   function drawBoxes(detections) {
-    if (!canvas || !ctx || !preview.naturalWidth) return;
+    if (!canvas || !ctx || !preview.naturalWidth || !preview.naturalHeight) return;
 
     syncCanvasToImage();
     clearBoxes();
@@ -147,11 +129,17 @@
       ctx.lineWidth = 3;
       ctx.strokeRect(x, y, w, h);
 
+      ctx.font = "bold 14px Arial, sans-serif";
+      const textWidth = ctx.measureText(text).width + 12;
+      const textHeight = 22;
+      const textX = x;
+      const textY = Math.max(0, y - textHeight);
+
       ctx.fillStyle = color;
-      ctx.fillRect(x, y - 22, 100, 22);
+      ctx.fillRect(textX, textY, textWidth, textHeight);
 
       ctx.fillStyle = "#fff";
-      ctx.fillText(text, x + 5, y - 6);
+      ctx.fillText(text, textX + 6, textY + 15);
     });
   }
 
@@ -159,9 +147,19 @@
     const file = input.files?.[0];
     if (!file) return;
 
+    preview.onload = () => {
+      syncCanvasToImage();
+      clearBoxes();
+    };
+
     preview.src = URL.createObjectURL(file);
     preview.style.display = "block";
-    previewHint.style.display = "none";
+    if (previewHint) previewHint.style.display = "none";
+    clearBoxes();
+  });
+
+  window.addEventListener("resize", () => {
+    syncCanvasToImage();
     clearBoxes();
   });
 
@@ -170,6 +168,8 @@
     if (!file) return alert("Sube una imagen");
 
     sendBtn.disabled = true;
+    const oldText = sendBtn.textContent;
+    sendBtn.textContent = "Analizando...";
 
     try {
       const fileJpg = await convertImageToJpeg(file);
@@ -191,12 +191,13 @@
       result.innerHTML = accepted.length
         ? `🟢 Casco detectado (${accepted.length})`
         : `🔴 No se detectó casco`;
-
     } catch {
       result.innerHTML = "🔴 Error";
+      clearBoxes();
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = oldText || "Detectar cascos";
     }
-
-    sendBtn.disabled = false;
   });
 
   // =======================
@@ -208,11 +209,13 @@
   const dots = document.querySelectorAll(".slider-dot");
 
   function showSlide(index) {
+    if (!slides.length) return;
+
     if (index < 0) index = slides.length - 1;
     if (index >= slides.length) index = 0;
 
-    slides.forEach(s => s.classList.remove("active"));
-    dots.forEach(d => d.classList.remove("active"));
+    slides.forEach((s) => s.classList.remove("active"));
+    dots.forEach((d) => d.classList.remove("active"));
 
     slides[index].classList.add("active");
     dots[index]?.classList.add("active");
@@ -223,18 +226,24 @@
   window.changeProjectSlide = (dir) => showSlide(currentSlide + dir);
   window.goToProjectSlide = (i) => showSlide(i);
 
-  // TECLADO ← →
   window.addEventListener("keydown", (e) => {
     const modal = document.getElementById("modalProyecto");
-    if (!modal.classList.contains("active")) return;
+    if (!modal || !modal.classList.contains("active")) return;
 
-    if (e.key === "ArrowLeft") showSlide(currentSlide - 1);
-    if (e.key === "ArrowRight") showSlide(currentSlide + 1);
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      showSlide(currentSlide - 1);
+    }
+
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      showSlide(currentSlide + 1);
+    }
   });
 
-  // Reset al abrir
-  document.querySelectorAll('[data-modal="modalProyecto"]').forEach(btn => {
-    btn.addEventListener("click", () => setTimeout(() => showSlide(0), 100));
+  document.querySelectorAll('[data-modal="modalProyecto"]').forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setTimeout(() => showSlide(0), 100);
+    });
   });
-
 })();
