@@ -31,6 +31,7 @@
     });
   });
 
+  // Cerrar con ESC
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       document.querySelectorAll(".modal").forEach((m) => m.classList.remove("active"));
@@ -68,10 +69,6 @@
     tempCanvas.height = img.naturalHeight || img.height;
 
     const tempCtx = tempCanvas.getContext("2d");
-    if (!tempCtx) {
-      throw new Error("No se pudo inicializar canvas.");
-    }
-
     tempCtx.fillStyle = "#ffffff";
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     tempCtx.drawImage(img, 0, 0);
@@ -79,10 +76,6 @@
     const blob = await new Promise((resolve) => {
       tempCanvas.toBlob(resolve, "image/jpeg", quality);
     });
-
-    if (!blob) {
-      throw new Error("No se pudo convertir la imagen a JPG.");
-    }
 
     const baseName = (file.name || "imagen")
       .replace(/\.[^.]+$/, "")
@@ -98,22 +91,17 @@
       Array.isArray(data.all_detections) && data.all_detections.length > 0
         ? data.all_detections
         : Array.isArray(data.detections)
-          ? data.detections
-          : [];
+        ? data.detections
+        : [];
 
-    if (debugSource.length === 0) {
-      return "sin detecciones";
-    }
+    if (debugSource.length === 0) return "sin detecciones";
 
-    return debugSource
-  .map((d) => {
-    let cls = (d.class_name || d.class || "sin_clase").toLowerCase();
-    if (cls === "head") cls = "no_hardhat";
-
-    const conf = Number(d.confidence ?? 0).toFixed(2);
-    return `${cls} (${conf})`;
-  })
-  .join(" | ");
+    return debugSource.map((d) => {
+      let cls = (d.class_name || d.class || "sin_clase").toLowerCase();
+      if (cls === "head") cls = "no_hardhat";
+      const conf = Number(d.confidence ?? 0).toFixed(2);
+      return `${cls} (${conf})`;
+    }).join(" | ");
   }
 
   function getAcceptedHardhats(data) {
@@ -125,24 +113,17 @@
   }
 
   function clearBoxes() {
-    if (!canvas || !ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx?.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   function syncCanvasToImage() {
     if (!canvas || !preview) return;
-    canvas.width = preview.clientWidth || preview.width || 0;
-    canvas.height = preview.clientHeight || preview.height || 0;
-    canvas.style.position = "absolute";
-    canvas.style.top = "0";
-    canvas.style.left = "0";
-    canvas.style.width = `${preview.clientWidth}px`;
-    canvas.style.height = `${preview.clientHeight}px`;
+    canvas.width = preview.clientWidth;
+    canvas.height = preview.clientHeight;
   }
 
   function drawBoxes(detections) {
-    if (!canvas || !ctx || !preview) return;
-    if (!preview.naturalWidth || !preview.naturalHeight) return;
+    if (!canvas || !ctx || !preview.naturalWidth) return;
 
     syncCanvasToImage();
     clearBoxes();
@@ -151,199 +132,109 @@
     const scaleY = preview.clientHeight / preview.naturalHeight;
 
     detections.forEach((d) => {
-      const x = Number(d.x ?? 0);
-      const y = Number(d.y ?? 0);
-      const w = Number(d.width ?? 0);
-      const h = Number(d.height ?? 0);
+      const x = (d.x - d.width / 2) * scaleX;
+      const y = (d.y - d.height / 2) * scaleY;
+      const w = d.width * scaleX;
+      const h = d.height * scaleY;
 
-      if (!w || !h) return;
+      let label = (d.class_name || d.class || "").toLowerCase();
+      if (label === "head") label = "no_hardhat";
 
-      const x1 = (x - w / 2) * scaleX;
-      const y1 = (y - h / 2) * scaleY;
-      const boxW = w * scaleX;
-      const boxH = h * scaleY;
-
-    let label = (d.class_name || d.class || "objeto").toLowerCase();
-if (label === "head") label = "no_hardhat";
-
-const confidence = Number(d.confidence ?? 0);
-const color = label === "hardhat" ? "#7c3aed" : "#ef4444";
-const text = `${label} ${(confidence * 100).toFixed(1)}%`;
+      const color = label === "hardhat" ? "#7c3aed" : "#ef4444";
+      const text = `${label} ${(d.confidence * 100).toFixed(1)}%`;
 
       ctx.strokeStyle = color;
       ctx.lineWidth = 3;
-      ctx.strokeRect(x1, y1, boxW, boxH);
-
-      ctx.font = "bold 14px Arial, sans-serif";
-      const textWidth = ctx.measureText(text).width;
-      const textHeight = 22;
-      const textX = x1;
-      const textY = Math.max(0, y1 - textHeight);
+      ctx.strokeRect(x, y, w, h);
 
       ctx.fillStyle = color;
-      ctx.fillRect(textX, textY, textWidth + 12, textHeight);
+      ctx.fillRect(x, y - 22, 100, 22);
 
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(text, textX + 6, textY + 15);
+      ctx.fillStyle = "#fff";
+      ctx.fillText(text, x + 5, y - 6);
     });
   }
 
-  input?.addEventListener("change", async () => {
+  input?.addEventListener("change", () => {
     const file = input.files?.[0];
     if (!file) return;
 
-    const objectUrl = URL.createObjectURL(file);
-    preview.onload = () => {
-      syncCanvasToImage();
-      clearBoxes();
-    };
-
-    preview.src = objectUrl;
+    preview.src = URL.createObjectURL(file);
     preview.style.display = "block";
-
-    if (previewHint) previewHint.style.display = "none";
-    result.innerHTML = "";
+    previewHint.style.display = "none";
     clearBoxes();
-  });
-
-  window.addEventListener("resize", () => {
-    syncCanvasToImage();
   });
 
   sendBtn?.addEventListener("click", async () => {
     const file = input.files?.[0];
-
-    if (!file) {
-      alert("Sube una imagen primero");
-      return;
-    }
+    if (!file) return alert("Sube una imagen");
 
     sendBtn.disabled = true;
-    const oldText = sendBtn.textContent;
-    sendBtn.textContent = "Analizando...";
 
     try {
-      const normalizedFile = await convertImageToJpeg(file);
-
+      const fileJpg = await convertImageToJpeg(file);
       const formData = new FormData();
-      formData.append("image", normalizedFile, normalizedFile.name);
+      formData.append("image", fileJpg);
 
       const resp = await fetch(`${API_BASE}/predict`, {
         method: "POST",
         body: formData
       });
 
-      const rawText = await resp.text();
-      console.log("Status /predict:", resp.status);
-      console.log("Raw /predict:", rawText);
+      const data = await resp.json();
 
-      let data = null;
-      try {
-        data = JSON.parse(rawText);
-      } catch {
-        result.innerHTML = `🔴 Respuesta no JSON (${resp.status})`;
-        clearBoxes();
-        return;
-      }
+      const detections = data.all_detections || data.detections || [];
+      drawBoxes(detections);
 
-      console.log("Respuesta /predict:", data);
+      const accepted = getAcceptedHardhats(data);
 
-      if (data.detections && data.detections.length > 0) {
-        console.log("Detecciones aceptadas:", data.detections);
-      }
+      result.innerHTML = accepted.length
+        ? `🟢 Casco detectado (${accepted.length})`
+        : `🔴 No se detectó casco`;
 
-      if (data.all_detections && data.all_detections.length > 0) {
-        console.log("Todas las detecciones:", data.all_detections);
-      }
-
-      if (!resp.ok) {
-        const msg =
-          data?.error ||
-          data?.message ||
-          data?.details ||
-          `Error ${resp.status}`;
-
-        result.innerHTML = `🔴 ${msg}`;
-        clearBoxes();
-        return;
-      }
-
-      const mode = data.mode ?? "roboflow";
-      const debugInfo = buildDebugInfo(data);
-      const acceptedHardhats = getAcceptedHardhats(data);
-      const acceptedCount = acceptedHardhats.length;
-      const finalDetected = acceptedCount > 0;
-
-      const allDetections =
-        Array.isArray(data.all_detections) && data.all_detections.length > 0
-          ? data.all_detections
-          : Array.isArray(data.detections)
-            ? data.detections
-            : [];
-
-      drawBoxes(allDetections);
-
-      if (finalDetected) {
-        result.innerHTML = `
-          🟢 Casco detectado (${mode})<br>
-          Cantidad: ${acceptedCount}<br>
-          <small>DEBUG: ${debugInfo}</small>
-        `;
-      } else {
-        result.innerHTML = `
-          🔴 No se detectó casco (${mode})<br>
-          Cantidad: 0<br>
-          <small>DEBUG: ${debugInfo}</small>
-        `;
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      result.innerHTML = "🔴 No se pudo procesar la imagen";
-      clearBoxes();
-    } finally {
-      sendBtn.disabled = false;
-      sendBtn.textContent = oldText || "Detectar cascos";
+    } catch {
+      result.innerHTML = "🔴 Error";
     }
+
+    sendBtn.disabled = false;
   });
 
-// =======================
-// SLIDER PROYECTO (MODAL)
-// =======================
+  // =======================
+  // SLIDER PROYECTO
+  // =======================
 
-let currentProjectSlide = 0;
+  let currentSlide = 0;
+  const slides = document.querySelectorAll(".project-slide");
+  const dots = document.querySelectorAll(".slider-dot");
 
-const projectSlides = document.querySelectorAll(".project-slide");
-const projectDots = document.querySelectorAll(".slider-dot");
+  function showSlide(index) {
+    if (index < 0) index = slides.length - 1;
+    if (index >= slides.length) index = 0;
 
-function updateProjectSlides(index) {
-  if (!projectSlides.length) return;
+    slides.forEach(s => s.classList.remove("active"));
+    dots.forEach(d => d.classList.remove("active"));
 
-  if (index < 0) index = projectSlides.length - 1;
-  if (index >= projectSlides.length) index = 0;
+    slides[index].classList.add("active");
+    dots[index]?.classList.add("active");
 
-  projectSlides.forEach((slide) => slide.classList.remove("active"));
-  projectDots.forEach((dot) => dot.classList.remove("active"));
+    currentSlide = index;
+  }
 
-  projectSlides[index].classList.add("active");
-  if (projectDots[index]) projectDots[index].classList.add("active");
+  window.changeProjectSlide = (dir) => showSlide(currentSlide + dir);
+  window.goToProjectSlide = (i) => showSlide(i);
 
-  currentProjectSlide = index;
-}
+  // TECLADO ← →
+  window.addEventListener("keydown", (e) => {
+    const modal = document.getElementById("modalProyecto");
+    if (!modal.classList.contains("active")) return;
 
-// Botones flechas
-window.changeProjectSlide = function (direction) {
-  updateProjectSlides(currentProjectSlide + direction);
-};
-
-// Dots
-window.goToProjectSlide = function (index) {
-  updateProjectSlides(index);
-};
-
-// Reiniciar cuando se abre el modal
-document.querySelectorAll('[data-modal="modalProyecto"]').forEach((btn) => {
-  btn.addEventListener("click", () => {
-    setTimeout(() => updateProjectSlides(0), 100);
+    if (e.key === "ArrowLeft") showSlide(currentSlide - 1);
+    if (e.key === "ArrowRight") showSlide(currentSlide + 1);
   });
-});
+
+  // Reset al abrir
+  document.querySelectorAll('[data-modal="modalProyecto"]').forEach(btn => {
+    btn.addEventListener("click", () => setTimeout(() => showSlide(0), 100));
+  });
+
 })();
